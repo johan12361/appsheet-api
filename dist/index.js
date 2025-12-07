@@ -15,7 +15,6 @@ var catchError_default = catchError;
 // src/request/request.ts
 async function makeRequest(config, table, properties = {}, action, rows, credentials) {
   const apiUrl = `${config.url}/api/v2/apps/${credentials.appId}/tables/${table}/Action?applicationAccessKey=${credentials.apiKey}`;
-  console.log("API URL:", apiUrl);
   const headers = {
     "Content-Type": "application/json"
   };
@@ -30,8 +29,6 @@ async function makeRequest(config, table, properties = {}, action, rows, credent
   };
   const [error, response] = await catchError_default(axios.post(apiUrl, body, { headers }));
   if (error) {
-    const data = error instanceof axios.AxiosError && error.response ? error.response.data : null;
-    console.error("Error al realizar la petici\xF3n:", data || error.message);
     throw error;
   }
   return response.data;

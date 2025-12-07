@@ -16,8 +16,6 @@ export async function makeRequest<T>(
   // construir la URL de la API de AppSheet
   const apiUrl = `${config.url}/api/v2/apps/${credentials.appId}/tables/${table}/Action?applicationAccessKey=${credentials.apiKey}`
 
-  console.log('API URL:', apiUrl)
-
   // Configurar los encabezados
   const headers = {
     'Content-Type': 'application/json'
@@ -39,8 +37,6 @@ export async function makeRequest<T>(
 
   // manejar errores de la solicitud
   if (error) {
-    const data = error instanceof axios.AxiosError && error.response ? error.response.data : null
-    console.error('Error al realizar la petición:', data || error.message)
     throw error
   }
 
