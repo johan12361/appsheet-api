@@ -127,6 +127,39 @@ const newUser = await users.create({
 console.log('User created:', newUser)
 ```
 
+### Update a record
+
+```typescript
+// The object must include the primary key of the record to update
+const updatedUser = await users.update({
+  id: '123', // Primary key required
+  name: 'John Doe Updated',
+  age: 31
+})
+console.log('User updated:', updatedUser)
+```
+
+**Important note:** The data object must include the primary key (the field marked with `primary: true` in the schema). The library automatically validates that the primary key exists before sending the request.
+
+### Update multiple records
+
+```typescript
+// Update multiple records in a single call (more efficient)
+const updatedUsers = await users.updateMany([
+  { id: '123', isActive: false },
+  { id: '456', age: 25 },
+  { id: '789', name: 'Jane Smith', email: 'jane@example.com' }
+])
+console.log('Users updated:', updatedUsers)
+```
+
+**Benefits of `updateMany`:**
+
+- More efficient than multiple individual calls
+- Sends all records in a single API request
+- Each object must include its primary key
+- Only the specified fields in each object are updated
+
 ## 🔧 Advanced Configuration
 
 ### Client Configuration
