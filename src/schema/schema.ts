@@ -4,6 +4,8 @@ import { create } from './methods/create.js'
 import { createMany } from './methods/createMany.js'
 import { update } from './methods/update.js'
 import { updateMany } from './methods/updateMany.js'
+import { deleteRecord } from './methods/delete.js'
+import { deleteMany } from './methods/deleteMany.js'
 
 import type { ObjectData, GenericObject } from '../types/objectData.js'
 import type { Credentials, ClientConfig, Config } from '../types/client.js'
@@ -62,14 +64,36 @@ export class Schema<T> {
     )
   }
 
-  //ss update item
   async update(data: GenericObject, properties: Properties = {}): Promise<T> {
     return update<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties)
   }
 
-  //ss update multiple items
   async updateMany(dataArray: GenericObject[], properties: Properties = {}): Promise<T[]> {
     return updateMany<T>(
+      this.credentials,
+      this.clientConfig,
+      this.schemaId,
+      this.config,
+      this.dataSchema,
+      dataArray,
+      properties
+    )
+  }
+
+  async delete(data: GenericObject, properties: Properties = {}): Promise<T> {
+    return deleteRecord<T>(
+      this.credentials,
+      this.clientConfig,
+      this.schemaId,
+      this.config,
+      this.dataSchema,
+      data,
+      properties
+    )
+  }
+
+  async deleteMany(dataArray: GenericObject[], properties: Properties = {}): Promise<T[]> {
+    return deleteMany<T>(
       this.credentials,
       this.clientConfig,
       this.schemaId,

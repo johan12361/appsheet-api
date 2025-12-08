@@ -194,6 +194,34 @@ console.log('Users updated:', updatedUsers)
 - Each object must include its primary key
 - Only the specified fields in each object are updated
 
+### Delete a record
+
+```typescript
+// The object must include the primary key of the record to delete
+const deletedUser = await users.delete({
+  id: '123' // Primary key required
+})
+console.log('User deleted:', deletedUser)
+```
+
+**Important note:** You only need to provide the primary key of the record to delete. The library automatically validates that the primary key exists before sending the request.
+
+### Delete multiple records
+
+```typescript
+// Delete multiple records in a single call (more efficient)
+const deletedUsers = await users.deleteMany([{ id: '123' }, { id: '456' }, { id: '789' }])
+console.log('Users deleted:', deletedUsers)
+```
+
+**Benefits of `deleteMany`:**
+
+- More efficient than multiple individual calls
+- Sends all records in a single API request
+- Reduces calls to the data provider
+- Each object should include only its primary key
+- Automations are invoked separately for each deleted row
+
 ## 🔧 Advanced Configuration
 
 ### Client Configuration

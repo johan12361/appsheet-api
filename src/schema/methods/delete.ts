@@ -6,7 +6,7 @@ import type { ObjectData, GenericObject } from '../../types/objectData.js'
 import type { Credentials, ClientConfig, Config } from '../../types/client.js'
 import type { Properties, Row } from '../../types/request.js'
 
-export async function create<T>(
+export async function deleteRecord<T>(
   credentials: Credentials,
   clientConfig: ClientConfig,
   schemaId: string,
@@ -15,6 +15,17 @@ export async function create<T>(
   data: GenericObject,
   properties: Properties = {}
 ): Promise<T> {
+  const primaryKeyEntry = Object.entries(dataSchema).find(([, value]) => value.primary === true)
+  if (!primaryKeyEntry) {
+    throw new Error('No primary key found in schema (property with primary: true)')
+  }
+
+  const [primaryKeyName] = primaryKeyEntry
+
+  if (!(primaryKeyName in data)) {
+    throw new Error(`Primary key '${primaryKeyName}' does not exist in the provided object`)
+  }
+
   let row: Row
   if (config.sendRawData) {
     row = data as Row
@@ -22,7 +33,7 @@ export async function create<T>(
     row = revertData(config, data, dataSchema)
   }
 
-  const response = await makeRequest(credentials, clientConfig, schemaId, 'Add', properties, row)
+  const response = await makeRequest(credentials, clientConfig, schemaId, 'Delete', properties, row)
 
   const singleItem = response[0]
 

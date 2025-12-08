@@ -23,35 +23,27 @@ const BUILD_VALUE_FUNCTIONS = {
 export function buildData<T>(config: Config, item: AppsheetData, schema: ObjectData): T {
   const data: Partial<T> = {}
 
-  // recorrer el esquema de datos
   for (const [key, value] of Object.entries(schema)) {
     let itemKey = key
-    // renombrar key si es necesario
     if (value.key) {
       itemKey = value.key
     }
 
-    // procesar solo tipos básicos
     if (BASIC_TYPES.includes(value.type)) {
-      // validar si la key existe en el item
       if (item[itemKey] === undefined) {
         continue
       }
 
-      // obtener valor como string
       const rawValue = getStringValue(item[itemKey])
 
-      // construir valor según tipo
       const buildValueFunction = BUILD_VALUE_FUNCTIONS[value.type as keyof typeof BUILD_VALUE_FUNCTIONS]
       if (buildValueFunction) {
-        // construir valor usando la función correspondiente
         data[key as keyof T] = buildValueFunction(value, rawValue, config) as T[keyof T]
       } else {
-        // asignar valor directamente
         data[key as keyof T] = rawValue as T[keyof T]
       }
     }
-    // procesar objetos anidados
+    // process nested objects
     else if (value.type === 'object' && value.properties && Object.keys(value.properties).length > 0) {
       const subData = buildData<T>(config, item, value.properties)
       data[key as keyof T] = subData as T[keyof T]
@@ -62,13 +54,11 @@ export function buildData<T>(config: Config, item: AppsheetData, schema: ObjectD
 }
 
 function getStringValue(value: unknown): string | undefined {
-  // extracción de URL
   if (typeof value === 'string' && value.includes('Url') && value.includes('LinkText')) {
     const jsonValue = JSON.parse(value)
     value = jsonValue.Url as string
   }
 
-  // valor simple
   if (typeof value === 'string') {
     if (value.trim() === '') {
       return undefined
@@ -76,7 +66,6 @@ function getStringValue(value: unknown): string | undefined {
     return value
   }
 
-  // valor nulo o indefinido
   if (value === undefined || value === null) {
     return undefined
   }

@@ -15,7 +15,6 @@ export async function update<T>(
   data: GenericObject,
   properties: Properties = {}
 ): Promise<T> {
-  // find primary key in schema
   const primaryKeyEntry = Object.entries(dataSchema).find(([, value]) => value.primary === true)
   if (!primaryKeyEntry) {
     throw new Error('No primary key found in schema (property with primary: true)')
@@ -23,7 +22,6 @@ export async function update<T>(
 
   const [primaryKeyName] = primaryKeyEntry
 
-  // check if primary key exists in data
   if (!(primaryKeyName in data)) {
     throw new Error(`Primary key '${primaryKeyName}' does not exist in the provided object`)
   }
@@ -35,18 +33,14 @@ export async function update<T>(
     row = revertData(config, data, dataSchema)
   }
 
-  // make request
   const response = await makeRequest(credentials, clientConfig, schemaId, 'Edit', properties, row)
 
-  // check if response is empty
   const singleItem = response[0]
 
-  // return raw data if config.returnRawData is true
   if (config.returnRawData) {
     return singleItem as unknown as T
   }
 
-  // build data
   const result: T = buildData<T>(config, singleItem, dataSchema)
   return result
 }

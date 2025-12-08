@@ -22,15 +22,12 @@ export async function createMany<T>(
     rows = dataArray.map((data) => revertData(config, data, dataSchema))
   }
 
-  // make request
   const response = await makeRequest(credentials, clientConfig, schemaId, 'Add', properties, rows)
 
-  // return raw data if config.returnRawData is true
   if (config.returnRawData) {
     return response as unknown as T[]
   }
 
-  // build data
   const result: T[] = response.map((item) => buildData<T>(config, item, dataSchema))
   return result
 }

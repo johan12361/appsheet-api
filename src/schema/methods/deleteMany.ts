@@ -6,7 +6,7 @@ import type { ObjectData, GenericObject } from '../../types/objectData.js'
 import type { Credentials, ClientConfig, Config } from '../../types/client.js'
 import type { Properties, Row } from '../../types/request.js'
 
-export async function updateMany<T>(
+export async function deleteMany<T>(
   credentials: Credentials,
   clientConfig: ClientConfig,
   schemaId: string,
@@ -36,7 +36,7 @@ export async function updateMany<T>(
     rows = dataArray.map((data) => revertData(config, data, dataSchema))
   }
 
-  const response = await makeRequest(credentials, clientConfig, schemaId, 'Edit', properties, rows)
+  const response = await makeRequest(credentials, clientConfig, schemaId, 'Delete', properties, rows)
 
   if (config.returnRawData) {
     return response as unknown as T[]
