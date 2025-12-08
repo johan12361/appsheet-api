@@ -54,8 +54,11 @@ declare class Schema<T> {
     findById(id: string): Promise<T | undefined>;
     find(properties?: Properties, rows?: Row | Row[]): Promise<T[]>;
     create(data: GenericObject, properties?: Properties): Promise<T>;
+    createMany(dataArray: GenericObject[], properties?: Properties): Promise<T[]>;
     update(data: GenericObject, properties?: Properties): Promise<T>;
     updateMany(dataArray: GenericObject[], properties?: Properties): Promise<T[]>;
+    delete(data: GenericObject, properties?: Properties): Promise<T>;
+    deleteMany(dataArray: GenericObject[], properties?: Properties): Promise<T[]>;
 }
 
 declare class AppsheetClient {
