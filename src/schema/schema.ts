@@ -1,6 +1,7 @@
 import { findById } from './methods/findById.js'
 import { find } from './methods/find.js'
 import { create } from './methods/create.js'
+import { createMany } from './methods/createMany.js'
 import { update } from './methods/update.js'
 import { updateMany } from './methods/updateMany.js'
 
@@ -46,6 +47,19 @@ export class Schema<T> {
   //ss create item
   async create(data: GenericObject, properties: Properties = {}): Promise<T> {
     return create<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties)
+  }
+
+  //ss create multiple items
+  async createMany(dataArray: GenericObject[], properties: Properties = {}): Promise<T[]> {
+    return createMany<T>(
+      this.credentials,
+      this.clientConfig,
+      this.schemaId,
+      this.config,
+      this.dataSchema,
+      dataArray,
+      properties
+    )
   }
 
   //ss update item

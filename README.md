@@ -127,6 +127,40 @@ const newUser = await users.create({
 console.log('User created:', newUser)
 ```
 
+### Create multiple records
+
+```typescript
+// Create multiple records in a single call (more efficient)
+const newUsers = await users.createMany([
+  {
+    name: 'John Doe',
+    email: 'john@example.com',
+    age: 30,
+    isActive: true
+  },
+  {
+    name: 'Jane Smith',
+    email: 'jane@example.com',
+    age: 25,
+    isActive: true
+  },
+  {
+    name: 'Bob Johnson',
+    email: 'bob@example.com',
+    age: 35,
+    isActive: false
+  }
+])
+console.log('Users created:', newUsers)
+```
+
+**Benefits of `createMany`:**
+
+- More efficient than multiple individual calls
+- Sends all records in a single API request
+- Reduces calls to the data provider
+- If the primary key has an initial value (like `UNIQUEID()` or `RANDBETWEEN()`), you can omit the primary key field
+
 ### Update a record
 
 ```typescript
