@@ -1,17 +1,18 @@
 import { findById } from './methods/findById.js'
 import { find } from './methods/find.js'
+import { create } from './methods/create.js'
 
-import type { ObjectData } from '../types/objectData.js'
+import type { ObjectData, GenericObject } from '../types/objectData.js'
 import type { Credentials, ClientConfig, Config } from '../types/client.js'
 import type { Row, Properties } from '../types/request.js'
 
 export class Schema<T> {
-  readonly credentials: Credentials
-  readonly config: Config
-  readonly clientConfig: ClientConfig
+  private readonly credentials: Credentials
+  private readonly config: Config
+  private readonly clientConfig: ClientConfig
 
-  readonly schemaId: string
-  readonly dataSchema: ObjectData
+  private readonly schemaId: string
+  private readonly dataSchema: ObjectData
 
   constructor(
     credentials: Credentials,
@@ -36,7 +37,12 @@ export class Schema<T> {
   }
 
   //ss get multiple items
-  async find(rows: Row | Row[] = [], properties: Properties = {}): Promise<T[]> {
-    return find<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, rows, properties)
+  async find(properties: Properties = {}, rows: Row | Row[] = []): Promise<T[]> {
+    return find<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, properties, rows)
+  }
+
+  //ss create item
+  async create(data: GenericObject, properties: Properties = {}): Promise<T> {
+    return create<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties)
   }
 }

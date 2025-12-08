@@ -2,7 +2,7 @@ import type { Data } from '../../types/objectData.js'
 
 const trueValues = ['true', '1', 'yes', 'on', 'y']
 
-export function buildBool(dataSchema: Data, value: string | undefined): boolean | undefined {
+export function buildBool(valueSchema: Data, value: string | undefined): boolean | undefined {
   if (value === undefined) {
     return undefined
   }

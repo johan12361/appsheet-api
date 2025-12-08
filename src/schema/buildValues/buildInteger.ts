@@ -1,6 +1,6 @@
 import type { Data } from '../../types/objectData.js'
 
-export function buildInteger(dataSchema: Data, value: string | undefined): number | undefined {
+export function buildInteger(valueSchema: Data, value: string | undefined): number | undefined {
   if (value === undefined) {
     return undefined
   }

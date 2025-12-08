@@ -3,7 +3,7 @@ import { DateTime } from 'luxon'
 import type { Config } from '../../types/client.js'
 import type { Data } from '../../types/objectData.js'
 
-export function buildDate(dataSchema: Data, value: string | undefined, config: Config): Date | undefined {
+export function buildDate(valueSchema: Data, value: string | undefined, config: Config): Date | undefined {
   if (value === undefined) {
     return undefined
   }

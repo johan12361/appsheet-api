@@ -3,6 +3,9 @@ import { buildNumber } from './buildNumber.js'
 import { buildString } from './buildString.js'
 import { buildDate } from './buildDate.js'
 
+import type { Config } from '../../types/client.js'
+import type { Data } from '../../types/objectData.js'
+
 const HANDLED = {
   string: buildString,
   number: buildNumber,
@@ -10,13 +13,10 @@ const HANDLED = {
   date: buildDate
 }
 
-import type { Config } from '../../types/client.js'
-import type { Data } from '../../types/objectData.js'
-
-export function buildArray(dataSchema: Data, value: string | undefined, config: Config): unknown[] | undefined {
+export function buildArray(valueSchema: Data, value: string | undefined, config: Config): unknown[] | undefined {
   if (value === undefined) {
-    if (dataSchema.default !== undefined) {
-      return Array.isArray(dataSchema.default) ? dataSchema.default : []
+    if (valueSchema.default !== undefined) {
+      return Array.isArray(valueSchema.default) ? valueSchema.default : []
     }
     return []
   }
@@ -29,9 +29,9 @@ export function buildArray(dataSchema: Data, value: string | undefined, config: 
       const cleanItem = item.trim()
 
       // construir el valor según el tipo de item
-      const buildValueFunction = HANDLED[dataSchema.itemType as keyof typeof HANDLED]
+      const buildValueFunction = HANDLED[valueSchema.itemType as keyof typeof HANDLED]
       if (buildValueFunction) {
-        const builtValue = buildValueFunction(dataSchema, cleanItem, config)
+        const builtValue = buildValueFunction(valueSchema, cleanItem, config)
         if (builtValue !== undefined) {
           return builtValue
         }

@@ -8,7 +8,8 @@ import type { ObjectData } from '../types/objectData.js'
 const defaultSystemContext: SystemContext = {
   config: {
     timezone: 'UTC',
-    returnRawData: false
+    returnRawData: false,
+    sendRawData: false
   },
   client: {
     url: 'https://www.appsheet.com',
@@ -17,9 +18,9 @@ const defaultSystemContext: SystemContext = {
   }
 }
 
-export class Client {
-  readonly credentials: Credentials
-  readonly systemContext: SystemContext
+export class AppsheetClient {
+  private readonly credentials: Credentials
+  private readonly systemContext: SystemContext
 
   constructor(credentials: Credentials, systemContext: Partial<SystemContext> = {}) {
     this.credentials = credentials

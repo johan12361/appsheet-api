@@ -2,3 +2,4 @@
 node_modules
 *.log
 playground/*
+README.ES.md

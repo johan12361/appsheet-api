@@ -12,6 +12,7 @@ export interface ClientConfig {
 export interface Config {
   timezone?: string
   returnRawData?: boolean
+  sendRawData?: boolean
   //NEXT ADD OTHER CONFIG OPTIONS
 }
 

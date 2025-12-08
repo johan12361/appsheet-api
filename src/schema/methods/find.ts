@@ -11,11 +11,11 @@ export async function find<T>(
   schemaId: string,
   config: Config,
   dataSchema: ObjectData,
-  row: Row | Row[] = [],
-  properties: Properties = {}
+  properties: Properties = {},
+  rows: Row | Row[] = []
 ): Promise<T[]> {
   // make request
-  const response = await makeRequest(credentials, clientConfig, schemaId, 'Find', properties, row)
+  const response = await makeRequest(credentials, clientConfig, schemaId, 'Find', properties, rows)
 
   // return raw data if config.returnRawData is true
   if (config.returnRawData) {

@@ -40,6 +40,16 @@ export async function makeRequest(
     throw error
   }
 
+  // validar que la respuesta contenga datos
+  if (!response?.data) {
+    throw new Error('La respuesta de AppSheet no contiene datos')
+  }
+
+  // verificar si la respuesta contiene datos
+  if (response.data.Rows && Array.isArray(response.data.Rows)) {
+    return response.data.Rows as AppsheetData[]
+  }
+
   // asegurar que los datos de la respuesta sean un array
   const toArray = Array.isArray(response.data) ? response.data : [response.data]
 

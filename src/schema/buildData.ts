@@ -25,14 +25,14 @@ export function buildData<T>(config: Config, item: AppsheetData, schema: ObjectD
 
   // recorrer el esquema de datos
   for (const [key, value] of Object.entries(schema)) {
+    let itemKey = key
+    // renombrar key si es necesario
+    if (value.key) {
+      itemKey = value.key
+    }
+
     // procesar solo tipos básicos
     if (BASIC_TYPES.includes(value.type)) {
-      let itemKey = key
-      // renombrar key si es necesario
-      if (value.key) {
-        itemKey = value.key
-      }
-
       // validar si la key existe en el item
       if (item[itemKey] === undefined) {
         continue
@@ -52,7 +52,7 @@ export function buildData<T>(config: Config, item: AppsheetData, schema: ObjectD
       }
     }
     // procesar objetos anidados
-    else if (value.type === 'object' && value.properties) {
+    else if (value.type === 'object' && value.properties && Object.keys(value.properties).length > 0) {
       const subData = buildData<T>(config, item, value.properties)
       data[key as keyof T] = subData as T[keyof T]
     }
@@ -69,7 +69,7 @@ function getStringValue(value: unknown): string | undefined {
   }
 
   // valor simple
-  else if (typeof value === 'string') {
+  if (typeof value === 'string') {
     if (value.trim() === '') {
       return undefined
     }
