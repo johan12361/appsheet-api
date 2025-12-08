@@ -1,10 +1,10 @@
+type Types = 'string' | 'number' | 'integer' | 'boolean' | 'array' | 'date' | 'object';
 interface Data {
-    type: 'string' | 'number' | 'integer' | 'boolean' | 'array' | 'date' | 'object' | 'jsonObject';
+    type: Types;
     key?: string;
     primary?: boolean;
-    required?: boolean;
     default?: unknown;
-    itemType?: 'string' | 'number' | 'integer' | 'boolean' | 'datetime';
+    itemType?: 'string' | 'number' | 'integer' | 'datetime';
     properties?: {
         [key: string]: Data;
     };
@@ -12,32 +12,55 @@ interface Data {
 interface ObjectData {
     [key: string]: Data;
 }
+type GenericObject = {
+    [key: string]: unknown;
+};
 
 interface Credentials {
     appId: string;
     apiKey: string;
 }
-
 interface ClientConfig {
-    url: string;
-    locale: 'en-US' | 'en-GB';
-    timezone: string;
+    url?: string;
+    locale?: 'en-US' | 'en-GB';
+    timezone?: string;
 }
+interface Config {
+    timezone?: string;
+    returnRawData?: boolean;
+    sendRawData?: boolean;
+}
+interface SystemContext {
+    client: ClientConfig;
+    config: Config;
+}
+
+type Row = Record<string, string>;
+interface Properties {
+    Selector?: string;
+    UserSettings?: Record<string, string>;
+}
+type AppsheetData = {
+    [key: string]: string | undefined;
+};
 
 declare class Schema<T> {
-    readonly credentials: Credentials;
-    readonly config: ClientConfig;
-    readonly schemaId: string;
-    readonly dataSchema: ObjectData;
-    constructor(credentials: Credentials, config: ClientConfig, schemaId: string, dataSchema: ObjectData);
-    getAll(): Promise<T[]>;
+    private readonly credentials;
+    private readonly config;
+    private readonly clientConfig;
+    private readonly schemaId;
+    private readonly dataSchema;
+    constructor(credentials: Credentials, config: Config, clientConfig: ClientConfig, schemaId: string, dataSchema: ObjectData);
+    findById(id: string): Promise<T | undefined>;
+    find(properties?: Properties, rows?: Row | Row[]): Promise<T[]>;
+    create(data: GenericObject, properties?: Properties): Promise<T>;
 }
 
-declare class Client {
-    readonly credentials: Credentials;
-    readonly config: ClientConfig;
-    constructor(credentials: Credentials, config?: Partial<ClientConfig>);
+declare class AppsheetClient {
+    private readonly credentials;
+    private readonly systemContext;
+    constructor(credentials: Credentials, systemContext?: Partial<SystemContext>);
     createSchema<T>(schemaId: string, data: ObjectData): Schema<T>;
 }
 
-export { Client };
+export { AppsheetClient, type AppsheetData, type ClientConfig, type Config, type Credentials, type Data, type GenericObject, type ObjectData, type Properties, type Row, type SystemContext, type Types };
