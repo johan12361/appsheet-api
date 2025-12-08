@@ -3,7 +3,9 @@ import { buildBool } from './buildValues/buildBool.js'
 import { buildNumber } from './buildValues/buildNumber.js'
 import { buildInteger } from './buildValues/buildInteger.js'
 import { buildArray } from './buildValues/buildArray.js'
+import { buildDate } from './buildValues/buildDate.js'
 
+import type { Config } from '../types/client.js'
 import type { ObjectData, Types } from '../types/objectData.js'
 import type { AppsheetData } from '../types/request.js'
 
@@ -14,10 +16,11 @@ const BUILD_VALUE_FUNCTIONS = {
   number: buildNumber,
   integer: buildInteger,
   boolean: buildBool,
-  array: buildArray
+  array: buildArray,
+  date: buildDate
 }
 
-export function buildData<T>(item: AppsheetData, schema: ObjectData): T {
+export function buildData<T>(config: Config, item: AppsheetData, schema: ObjectData): T {
   const data: Partial<T> = {}
 
   // recorrer el esquema de datos
@@ -42,7 +45,7 @@ export function buildData<T>(item: AppsheetData, schema: ObjectData): T {
       const buildValueFunction = BUILD_VALUE_FUNCTIONS[value.type as keyof typeof BUILD_VALUE_FUNCTIONS]
       if (buildValueFunction) {
         // construir valor usando la función correspondiente
-        data[key as keyof T] = buildValueFunction(value, rawValue) as T[keyof T]
+        data[key as keyof T] = buildValueFunction(value, rawValue, config) as T[keyof T]
       } else {
         // asignar valor directamente
         data[key as keyof T] = rawValue as T[keyof T]
