@@ -1,5 +1,7 @@
-interface Data {
-  type: 'string' | 'number' | 'integer' | 'boolean' | 'array' | 'date' | 'object' | 'jsonObject'
+export type Types = 'string' | 'number' | 'integer' | 'boolean' | 'array' | 'date' | 'object'
+
+export interface Data {
+  type: Types
   key?: string
   primary?: boolean
   required?: boolean

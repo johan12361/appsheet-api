@@ -4,15 +4,16 @@ import catchError from '../utils/catchError.js'
 
 import type { Credentials } from '../types/credentials.js'
 import type { ClientConfig } from '../types/clientConfig.js'
+import type { Row, Properties, AppsheetData } from '../types/request.js'
 
-export async function makeRequest<T>(
+export async function makeRequest(
+  credentials: Credentials,
   config: ClientConfig,
   table: string,
-  properties = {},
   action: string,
-  rows: unknown[] | unknown,
-  credentials: Credentials
-): Promise<T> {
+  properties: Properties = {},
+  rows: Row | Row[]
+): Promise<AppsheetData[]> {
   // construir la URL de la API de AppSheet
   const apiUrl = `${config.url}/api/v2/apps/${credentials.appId}/tables/${table}/Action?applicationAccessKey=${credentials.apiKey}`
 
@@ -40,5 +41,5 @@ export async function makeRequest<T>(
     throw error
   }
 
-  return response.data as T
+  return response.data as AppsheetData[]
 }
