@@ -29,9 +29,15 @@ export class Schema<T> {
 
   //ss get all items
   async find(rows: Row | Row[] = [], properties: Properties = {}): Promise<T[]> {
+    // make request
     const response = await makeRequest(this.credentials, this.clientConfig, this.schemaId, 'Find', properties, rows)
 
-    //TODO: convert response to T[] on base of this.dataSchema
+    // return raw data if config.rawData is true
+    if (this.config.rawData) {
+      return response as unknown as T[]
+    }
+
+    // build data
     const result: T[] = response.map((item) => buildData<T>(this.config, item, this.dataSchema))
 
     return result

@@ -1,38 +1,42 @@
 import { Schema } from '../schema/schema.js'
 
 // types
-import type { Credentials, ClientConfig, Config } from '../types/client.js'
+import type { Credentials, SystemContext } from '../types/client.js'
 import type { ObjectData } from '../types/objectData.js'
 
-const defaultConfig: Config = {
-  timezone: 'UTC'
-}
-
-const defaultClientConfig: ClientConfig = {
-  url: 'https://www.appsheet.com',
-  locale: 'en-GB',
-  timezone: process.env.TZ || 'UTC'
+// default configs
+const defaultSystemContext: SystemContext = {
+  config: {
+    timezone: 'UTC',
+    rawData: false
+  },
+  client: {
+    url: 'https://www.appsheet.com',
+    locale: 'en-GB',
+    timezone: process.env.TZ || 'UTC'
+  }
 }
 
 export class Client {
   readonly credentials: Credentials
-  readonly config: Config
-  readonly clientConfig: ClientConfig
+  readonly systemContext: SystemContext
 
-  constructor(credentials: Credentials, config: Partial<Config> = {}, clientConfig: Partial<ClientConfig> = {}) {
+  constructor(credentials: Credentials, systemContext: Partial<SystemContext> = {}) {
     this.credentials = credentials
-    this.config = {
-      ...defaultConfig,
-      ...config
-    }
-    this.clientConfig = {
-      ...defaultClientConfig,
-      ...clientConfig
+    this.systemContext = {
+      config: {
+        ...defaultSystemContext.config,
+        ...systemContext?.config
+      },
+      client: {
+        ...defaultSystemContext.client,
+        ...systemContext?.client
+      }
     }
   }
 
   //ss create schema
   createSchema<T>(schemaId: string, data: ObjectData): Schema<T> {
-    return new Schema<T>(this.credentials, this.config, this.clientConfig, schemaId, data)
+    return new Schema<T>(this.credentials, this.systemContext.config, this.systemContext.client, schemaId, data)
   }
 }
