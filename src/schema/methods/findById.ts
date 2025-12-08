@@ -33,8 +33,8 @@ export async function findById<T>(
   // check if response is empty
   const singleItem = response[0]
 
-  // return raw data if config.rawData is true
-  if (config.rawData) {
+  // return raw data if config.returnRawData is true
+  if (config.returnRawData) {
     return singleItem as unknown as T
   }
 

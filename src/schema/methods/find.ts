@@ -17,8 +17,8 @@ export async function find<T>(
   // make request
   const response = await makeRequest(credentials, clientConfig, schemaId, 'Find', properties, row)
 
-  // return raw data if config.rawData is true
-  if (config.rawData) {
+  // return raw data if config.returnRawData is true
+  if (config.returnRawData) {
     return response as unknown as T[]
   }
 

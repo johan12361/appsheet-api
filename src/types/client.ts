@@ -11,7 +11,8 @@ export interface ClientConfig {
 
 export interface Config {
   timezone?: string
-  rawData?: boolean
+  returnRawData?: boolean
+  //NEXT ADD OTHER CONFIG OPTIONS
 }
 
 export interface SystemContext {

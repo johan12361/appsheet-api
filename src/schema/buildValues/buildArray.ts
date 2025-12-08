@@ -1,4 +1,3 @@
-import { buildBool } from './buildBool.js'
 import { buildInteger } from './buildInteger.js'
 import { buildNumber } from './buildNumber.js'
 import { buildString } from './buildString.js'
@@ -8,7 +7,6 @@ const HANDLED = {
   string: buildString,
   number: buildNumber,
   integer: buildInteger,
-  boolean: buildBool,
   date: buildDate
 }
 

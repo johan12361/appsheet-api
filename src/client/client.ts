@@ -8,7 +8,7 @@ import type { ObjectData } from '../types/objectData.js'
 const defaultSystemContext: SystemContext = {
   config: {
     timezone: 'UTC',
-    rawData: false
+    returnRawData: false
   },
   client: {
     url: 'https://www.appsheet.com',

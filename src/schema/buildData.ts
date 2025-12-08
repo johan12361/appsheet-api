@@ -51,6 +51,11 @@ export function buildData<T>(config: Config, item: AppsheetData, schema: ObjectD
         data[key as keyof T] = rawValue as T[keyof T]
       }
     }
+    // procesar objetos anidados
+    else if (value.type === 'object' && value.properties) {
+      const subData = buildData<T>(config, item, value.properties)
+      data[key as keyof T] = subData as T[keyof T]
+    }
   }
 
   return data as T
