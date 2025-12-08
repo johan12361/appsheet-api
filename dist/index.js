@@ -358,6 +358,37 @@ async function create(credentials, clientConfig, schemaId, config, dataSchema, d
   return result;
 }
 
+// src/schema/methods/update.ts
+async function update(credentials, clientConfig, schemaId, config, dataSchema, data, properties = {}) {
+  let row;
+  if (config.sendRawData) {
+    row = data;
+  } else {
+    row = revertData(config, data, dataSchema);
+  }
+  const response = await makeRequest(credentials, clientConfig, schemaId, "Edit", properties, row);
+  const singleItem = response[0];
+  if (config.returnRawData) {
+    return singleItem;
+  }
+  const result = buildData(config, singleItem, dataSchema);
+  return result;
+}
+async function updateMany(credentials, clientConfig, schemaId, config, dataSchema, dataArray, properties = {}) {
+  let rows;
+  if (config.sendRawData) {
+    rows = dataArray;
+  } else {
+    rows = dataArray.map((data) => revertData(config, data, dataSchema));
+  }
+  const response = await makeRequest(credentials, clientConfig, schemaId, "Edit", properties, rows);
+  if (config.returnRawData) {
+    return response;
+  }
+  const result = response.map((item) => buildData(config, item, dataSchema));
+  return result;
+}
+
 // src/schema/schema.ts
 var Schema = class {
   constructor(credentials, config, clientConfig, schemaId, dataSchema) {
@@ -381,6 +412,22 @@ var Schema = class {
   //ss create item
   async create(data, properties = {}) {
     return create(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties);
+  }
+  //ss update item
+  async update(data, properties = {}) {
+    return update(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties);
+  }
+  //ss update multiple items
+  async updateMany(dataArray, properties = {}) {
+    return updateMany(
+      this.credentials,
+      this.clientConfig,
+      this.schemaId,
+      this.config,
+      this.dataSchema,
+      dataArray,
+      properties
+    );
   }
 };
 

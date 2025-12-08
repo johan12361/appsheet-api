@@ -1,6 +1,8 @@
 import { findById } from './methods/findById.js'
 import { find } from './methods/find.js'
 import { create } from './methods/create.js'
+import { update } from './methods/update.js'
+import { updateMany } from './methods/updateMany.js'
 
 import type { ObjectData, GenericObject } from '../types/objectData.js'
 import type { Credentials, ClientConfig, Config } from '../types/client.js'
@@ -44,5 +46,23 @@ export class Schema<T> {
   //ss create item
   async create(data: GenericObject, properties: Properties = {}): Promise<T> {
     return create<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties)
+  }
+
+  //ss update item
+  async update(data: GenericObject, properties: Properties = {}): Promise<T> {
+    return update<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties)
+  }
+
+  //ss update multiple items
+  async updateMany(dataArray: GenericObject[], properties: Properties = {}): Promise<T[]> {
+    return updateMany<T>(
+      this.credentials,
+      this.clientConfig,
+      this.schemaId,
+      this.config,
+      this.dataSchema,
+      dataArray,
+      properties
+    )
   }
 }

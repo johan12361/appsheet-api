@@ -42,7 +42,7 @@ export async function makeRequest(
 
   // validar que la respuesta contenga datos
   if (!response?.data) {
-    throw new Error('La respuesta de AppSheet no contiene datos')
+    throw new Error('AppSheet response does not contain data')
   }
 
   // verificar si la respuesta contiene datos
