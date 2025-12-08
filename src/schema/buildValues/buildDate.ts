@@ -14,7 +14,6 @@ export function buildDate(dataSchema: Data, value: string | undefined, config: C
 
   if (dt) {
     const jsDate = dt.toJSDate()
-    console.log('Built date:', jsDate.toLocaleString())
     return jsDate
   }
 

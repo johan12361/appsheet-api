@@ -34,7 +34,7 @@ export function buildData<T>(config: Config, item: AppsheetData, schema: ObjectD
       }
 
       // validar si la key existe en el item
-      if (!(itemKey in item)) {
+      if (item[itemKey] === undefined) {
         continue
       }
 

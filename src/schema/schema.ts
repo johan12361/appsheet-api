@@ -1,5 +1,5 @@
-import { makeRequest } from '../request/request.js'
-import { buildData } from './buildData.js'
+import { findById } from './methods/findById.js'
+import { find } from './methods/find.js'
 
 import type { ObjectData } from '../types/objectData.js'
 import type { Credentials, ClientConfig, Config } from '../types/client.js'
@@ -27,19 +27,16 @@ export class Schema<T> {
     this.dataSchema = dataSchema
   }
 
-  //ss get all items
-  async find(rows: Row | Row[] = [], properties: Properties = {}): Promise<T[]> {
-    // make request
-    const response = await makeRequest(this.credentials, this.clientConfig, this.schemaId, 'Find', properties, rows)
-
-    // return raw data if config.rawData is true
-    if (this.config.rawData) {
-      return response as unknown as T[]
+  //ss get single item
+  async findById(id: string): Promise<T | undefined> {
+    if (!id) {
+      throw new Error('ID is required to find an item by ID.')
     }
+    return findById<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, id)
+  }
 
-    // build data
-    const result: T[] = response.map((item) => buildData<T>(this.config, item, this.dataSchema))
-
-    return result
+  //ss get multiple items
+  async find(rows: Row | Row[] = [], properties: Properties = {}): Promise<T[]> {
+    return find<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, rows, properties)
   }
 }

@@ -40,5 +40,9 @@ export async function makeRequest(
     throw error
   }
 
-  return response.data as AppsheetData[]
+  // asegurar que los datos de la respuesta sean un array
+  const toArray = Array.isArray(response.data) ? response.data : [response.data]
+
+  // devolver los datos como AppsheetData[]
+  return toArray as AppsheetData[]
 }
