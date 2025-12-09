@@ -39,6 +39,7 @@ type Row = Record<string, string>;
 interface Properties {
     Selector?: string;
     UserSettings?: Record<string, string>;
+    [key: string]: unknown;
 }
 type AppsheetData = {
     [key: string]: string | undefined;

@@ -356,20 +356,20 @@ function revertData(config, data, schema) {
       itemKey = value.key;
     }
     if (BASIC_TYPES2.includes(value.type)) {
-      if (data[itemKey] === void 0) {
+      if (data[key] === void 0) {
         continue;
       }
       const revertValueFunction = REVERT_VALUE_FUNCTIONS[value.type];
       if (revertValueFunction) {
-        row[itemKey] = revertValueFunction(value, data[itemKey]);
+        row[itemKey] = revertValueFunction(value, data[key]);
       } else {
-        row[itemKey] = data[itemKey];
+        row[itemKey] = data[key];
       }
     } else if (value.type === "object" && value.properties && Object.keys(value.properties).length > 0) {
-      if (data[itemKey] === void 0) {
+      if (data[key] === void 0) {
         continue;
       }
-      const subData = revertData(config, data[itemKey], value.properties);
+      const subData = revertData(config, data[key], value.properties);
       for (const [subKey, subValue] of Object.entries(subData)) {
         row[subKey] = subValue;
       }
