@@ -334,6 +334,40 @@ function revertDate(valueSchema, value) {
   return convertToDateString(defaultValue);
 }
 
+// src/schema/revertValues/revertArray.ts
+var HANDLED2 = {
+  string: revertString,
+  number: revertNumber,
+  integer: revertInteger,
+  date: revertDate
+};
+function processArrayToString(arr, valueSchema) {
+  const revertValueFunction = HANDLED2[valueSchema.itemType];
+  const items = arr.map((item) => {
+    if (revertValueFunction) {
+      const revertedValue = revertValueFunction(valueSchema, item);
+      if (revertedValue !== void 0) {
+        return String(revertedValue);
+      }
+    }
+    return String(item);
+  }).filter((v) => v !== void 0 && v !== "undefined");
+  return items.join(" , ");
+}
+function revertArray(valueSchema, value) {
+  if (value !== void 0 && Array.isArray(value)) {
+    return processArrayToString(value, valueSchema);
+  }
+  if (valueSchema.default === void 0) {
+    return void 0;
+  }
+  const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
+  if (Array.isArray(defaultValue)) {
+    return defaultValue.join(" , ");
+  }
+  return void 0;
+}
+
 // src/schema/revertData.ts
 var BASIC_TYPES2 = ["string", "number", "integer", "boolean", "array", "date"];
 var REVERT_VALUE_FUNCTIONS = {
@@ -341,6 +375,7 @@ var REVERT_VALUE_FUNCTIONS = {
   number: revertNumber,
   integer: revertInteger,
   boolean: revertBool,
+  array: revertArray,
   date: revertDate
 };
 function revertData(config, data, schema) {

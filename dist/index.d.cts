@@ -12,9 +12,6 @@ interface Data {
 interface ObjectData {
     [key: string]: Data;
 }
-type GenericObject = {
-    [key: string]: unknown;
-};
 
 interface Credentials {
     appId: string;
@@ -56,12 +53,12 @@ declare class Schema<T> {
     constructor(credentials: Credentials, config: Config, clientConfig: ClientConfig, schemaId: string, dataSchema: ObjectData);
     findById(id: string): Promise<T | undefined>;
     find(properties?: Properties, rows?: Row | Row[]): Promise<T[]>;
-    create(data: GenericObject, properties?: Properties): Promise<T>;
-    createMany(dataArray: GenericObject[], properties?: Properties): Promise<T[]>;
-    update(data: GenericObject, properties?: Properties): Promise<T>;
-    updateMany(dataArray: GenericObject[], properties?: Properties): Promise<T[]>;
-    delete(data: GenericObject, properties?: Properties): Promise<T>;
-    deleteMany(dataArray: GenericObject[], properties?: Properties): Promise<T[]>;
+    create(data: Record<string, unknown>, properties?: Properties): Promise<T>;
+    createMany(dataArray: Record<string, unknown>[], properties?: Properties): Promise<T[]>;
+    update(data: Record<string, unknown>, properties?: Properties): Promise<T>;
+    updateMany(dataArray: Record<string, unknown>[], properties?: Properties): Promise<T[]>;
+    delete(data: Record<string, unknown>, properties?: Properties): Promise<T>;
+    deleteMany(dataArray: Record<string, unknown>[], properties?: Properties): Promise<T[]>;
 }
 
 declare class AppsheetClient {
@@ -71,4 +68,4 @@ declare class AppsheetClient {
     createSchema<T>(schemaId: string, data: ObjectData): Schema<T>;
 }
 
-export { AppsheetClient, type AppsheetData, type ClientConfig, type Config, type Credentials, type Data, type GenericObject, type ObjectData, type Properties, type Row, type SystemContext, type Types };
+export { AppsheetClient, type AppsheetData, type ClientConfig, type Config, type Credentials, type Data, type ObjectData, type Properties, type Row, type SystemContext, type Types };
