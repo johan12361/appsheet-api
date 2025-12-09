@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { revertData } from '../../schema/revertData.js'
-import type { ObjectData, GenericObject } from '../../types/objectData.js'
+import type { ObjectData } from '../../types/objectData.js'
 import type { Config } from '../../types/client.js'
 
 describe('revertData', () => {
@@ -17,7 +17,7 @@ describe('revertData', () => {
       active: { type: 'boolean' }
     }
 
-    const item: GenericObject = {
+    const item: Record<string, unknown> = {
       name: 'John Doe',
       age: 30,
       active: true
@@ -36,7 +36,7 @@ describe('revertData', () => {
       userName: { type: 'string', key: 'user_name' }
     }
 
-    const item: GenericObject = {
+    const item: Record<string, unknown> = {
       userName: 'johndoe'
     }
 
@@ -52,7 +52,7 @@ describe('revertData', () => {
       age: { type: 'number' }
     }
 
-    const item: GenericObject = {
+    const item: Record<string, unknown> = {
       name: 'John Doe'
     }
 
@@ -75,7 +75,7 @@ describe('revertData', () => {
       }
     }
 
-    const item: GenericObject = {
+    const item: Record<string, unknown> = {
       name: 'John Doe',
       address: {
         street: '123 Main St',
@@ -96,7 +96,7 @@ describe('revertData', () => {
       count: { type: 'integer' }
     }
 
-    const item: GenericObject = {
+    const item: Record<string, unknown> = {
       count: 42
     }
 
@@ -125,7 +125,7 @@ describe('revertData', () => {
       }
     }
 
-    const item: GenericObject = {
+    const item: Record<string, unknown> = {
       name: 'Test User'
       // id, createdAt, and score will use function defaults
     }
@@ -151,7 +151,7 @@ describe('revertData', () => {
       }
     }
 
-    const item: GenericObject = {
+    const item: Record<string, unknown> = {
       id: undefined, // This will be skipped by revertData
       name: 'Test User'
     }
@@ -176,7 +176,7 @@ describe('revertData', () => {
       }
     }
 
-    const item: GenericObject = {
+    const item: Record<string, unknown> = {
       name: 'Actual Name'
     }
 
@@ -203,7 +203,7 @@ describe('revertData', () => {
       }
     }
 
-    const item: GenericObject = {
+    const item: Record<string, unknown> = {
       name: 'Test User'
       // status and code not provided - defaults will be applied
     }
@@ -216,3 +216,4 @@ describe('revertData', () => {
     })
   })
 })
+

@@ -2,7 +2,7 @@ import { makeRequest } from '../../request/request.js'
 import { buildData } from '../buildData.js'
 import { revertData } from '../revertData.js'
 
-import type { ObjectData, GenericObject } from '../../types/objectData.js'
+import type { ObjectData } from '../../types/objectData.js'
 import type { Credentials, ClientConfig, Config } from '../../types/client.js'
 import type { Properties, Row } from '../../types/request.js'
 
@@ -12,7 +12,7 @@ export async function deleteMany<T>(
   schemaId: string,
   config: Config,
   dataSchema: ObjectData,
-  dataArray: GenericObject[],
+  dataArray: Record<string, unknown>[],
   properties: Properties = {}
 ): Promise<T[]> {
   const primaryKeyEntry = Object.entries(dataSchema).find(([, value]) => value.primary === true)
