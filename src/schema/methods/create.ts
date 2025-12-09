@@ -6,20 +6,20 @@ import type { ObjectData } from '../../types/objectData.js'
 import type { Credentials, ClientConfig, Config } from '../../types/client.js'
 import type { Properties, Row } from '../../types/request.js'
 
-export async function create<T, D extends Record<string, unknown> = Record<string, unknown>>(
+export async function create<T>(
   credentials: Credentials,
   clientConfig: ClientConfig,
   schemaId: string,
   config: Config,
   dataSchema: ObjectData,
-  data: D,
+  data: Partial<T>,
   properties: Properties = {}
 ): Promise<T> {
   let row: Row
   if (config.sendRawData) {
     row = data as Row
   } else {
-    row = revertData(config, data, dataSchema)
+    row = revertData(config, data as Record<string, unknown>, dataSchema)
   }
 
   const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Add', properties, row)

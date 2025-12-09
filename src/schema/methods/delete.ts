@@ -6,13 +6,13 @@ import type { ObjectData } from '../../types/objectData.js'
 import type { Credentials, ClientConfig, Config } from '../../types/client.js'
 import type { Properties, Row } from '../../types/request.js'
 
-export async function deleteRecord<T, D extends Record<string, unknown> = Record<string, unknown>>(
+export async function deleteRecord<T>(
   credentials: Credentials,
   clientConfig: ClientConfig,
   schemaId: string,
   config: Config,
   dataSchema: ObjectData,
-  data: D,
+  data: Partial<T>,
   properties: Properties = {}
 ): Promise<T> {
   const primaryKeyEntry = Object.entries(dataSchema).find(([, value]) => value.primary === true)
@@ -22,7 +22,7 @@ export async function deleteRecord<T, D extends Record<string, unknown> = Record
 
   const [primaryKeyName] = primaryKeyEntry
 
-  if (!(primaryKeyName in data)) {
+  if (!(primaryKeyName in (data as Record<string, unknown>))) {
     throw new Error(`Primary key '${primaryKeyName}' does not exist in the provided object`)
   }
 
@@ -30,7 +30,7 @@ export async function deleteRecord<T, D extends Record<string, unknown> = Record
   if (config.sendRawData) {
     row = data as Row
   } else {
-    row = revertData(config, data, dataSchema)
+    row = revertData(config, data as Record<string, unknown>, dataSchema)
   }
 
   const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Delete', properties, row)

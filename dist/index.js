@@ -529,15 +529,7 @@ var Schema = class {
     return find(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, properties, rows);
   }
   async create(data, properties = {}) {
-    return create(
-      this.credentials,
-      this.clientConfig,
-      this.schemaId,
-      this.config,
-      this.dataSchema,
-      data,
-      properties
-    );
+    return create(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties);
   }
   async createMany(dataArray, properties = {}) {
     return createMany(
@@ -551,15 +543,7 @@ var Schema = class {
     );
   }
   async update(data, properties = {}) {
-    return update(
-      this.credentials,
-      this.clientConfig,
-      this.schemaId,
-      this.config,
-      this.dataSchema,
-      data,
-      properties
-    );
+    return update(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties);
   }
   async updateMany(dataArray, properties = {}) {
     return updateMany(

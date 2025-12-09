@@ -6,13 +6,13 @@ import type { ObjectData } from '../../types/objectData.js'
 import type { Credentials, ClientConfig, Config } from '../../types/client.js'
 import type { Properties, Row } from '../../types/request.js'
 
-export async function updateMany<T, D extends Record<string, unknown> = Record<string, unknown>>(
+export async function updateMany<T>(
   credentials: Credentials,
   clientConfig: ClientConfig,
   schemaId: string,
   config: Config,
   dataSchema: ObjectData,
-  data: D[],
+  data: Partial<T>[],
   properties: Properties = {}
 ): Promise<T[]> {
   const primaryKeyEntry = Object.entries(dataSchema).find(([, value]) => value.primary === true)
@@ -23,7 +23,7 @@ export async function updateMany<T, D extends Record<string, unknown> = Record<s
   const [primaryKeyName] = primaryKeyEntry
 
   for (let i = 0; i < data.length; i++) {
-    const item = data[i]
+    const item = data[i] as Record<string, unknown>
     if (!(primaryKeyName in item)) {
       throw new Error(`Primary key '${primaryKeyName}' does not exist in object at index ${i}`)
     }
@@ -33,7 +33,7 @@ export async function updateMany<T, D extends Record<string, unknown> = Record<s
   if (config.sendRawData) {
     rows = data as Row[]
   } else {
-    rows = data.map((item) => revertData(config, item, dataSchema))
+    rows = data.map((item) => revertData(config, item as Record<string, unknown>, dataSchema))
   }
 
   const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Edit', properties, rows)

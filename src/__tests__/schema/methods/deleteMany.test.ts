@@ -104,7 +104,7 @@ describe('deleteMany', () => {
   })
 
   it('should throw error when primary key missing in one object', async () => {
-    const dataArray = [{ id: '1' }, { name: 'User 2' }]
+    const dataArray: Partial<User>[] = [{ id: '1' }, { name: 'User 2' }]
 
     await expect(deleteMany(credentials, clientConfig, 'Users', config, userSchema, dataArray)).rejects.toThrow(
       "Primary key 'id' does not exist in object at index 1"
