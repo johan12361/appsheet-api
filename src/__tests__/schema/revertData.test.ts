@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { revertData } from '../../schema/revertData'
-import type { ObjectData, GenericObject } from '../types/objectData'
-import type { Config } from '../types/client'
+import { revertData } from '../../schema/revertData.js'
+import type { ObjectData, GenericObject } from '../../types/objectData.js'
+import type { Config } from '../../types/client.js'
 
 describe('revertData', () => {
   const config: Config = {

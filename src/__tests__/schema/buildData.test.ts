@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { buildData } from '../../schema/buildData'
-import type { ObjectData } from '../types/objectData'
-import type { Config } from '../types/client'
-import type { AppsheetData } from '../types/request'
+import { buildData } from '../../schema/buildData.js'
+import type { ObjectData } from '../../types/objectData.js'
+import type { Config } from '../../types/client.js'
+import type { AppsheetData } from '../../types/request.js'
 
 describe('buildData', () => {
   const config: Config = {

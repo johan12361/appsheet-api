@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import catchError from '../../utils/catchError'
+import catchError from '../../utils/catchError.js'
 
 describe('catchError', () => {
   it('should return result on successful promise', async () => {
@@ -20,7 +20,7 @@ describe('catchError', () => {
   })
 
   it('should handle async function that throws', async () => {
-    const asyncFn = async () => {
+    const asyncFn = async (): Promise<never> => {
       throw new Error('Async error')
     }
     const [error, result] = await catchError(asyncFn())
@@ -31,7 +31,7 @@ describe('catchError', () => {
   })
 
   it('should handle async function that resolves', async () => {
-    const asyncFn = async () => {
+    const asyncFn = async (): Promise<{ data: string }> => {
       return { data: 'test' }
     }
     const [error, result] = await catchError(asyncFn())

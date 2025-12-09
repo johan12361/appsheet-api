@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { buildDate } from '../../../schema/buildValues/buildDate'
-import type { Config } from '../types/client'
+import { buildDate } from '../../../schema/buildValues/buildDate.js'
+import type { Config } from '../../../types/client.js'
+import type { Data } from '../../../types/objectData.js'
 
 describe('buildDate', () => {
   const config: Config = {
@@ -10,12 +11,12 @@ describe('buildDate', () => {
   }
 
   it('should return undefined for undefined input', () => {
-    const result = buildDate({} as any, undefined, config)
+    const result = buildDate({} as Data, undefined, config)
     expect(result).toBeUndefined()
   })
 
   it('should parse MM/DD/YYYY format', () => {
-    const result = buildDate({} as any, '12/25/2023', config)
+    const result = buildDate({} as Data, '12/25/2023', config)
     expect(result).toBeInstanceOf(Date)
     expect(result?.getFullYear()).toBe(2023)
     expect(result?.getMonth()).toBe(11) // December is 11
@@ -25,7 +26,7 @@ describe('buildDate', () => {
   })
 
   it('should parse MM/DD/YYYY HH:mm:ss format', () => {
-    const result = buildDate({} as any, '12/25/2023 14:30:45', config)
+    const result = buildDate({} as Data, '12/25/2023 14:30:45', config)
     expect(result).toBeInstanceOf(Date)
     expect(result?.getFullYear()).toBe(2023)
     expect(result?.getMonth()).toBe(11)
@@ -37,12 +38,12 @@ describe('buildDate', () => {
       ...config,
       timezone: 'America/New_York'
     }
-    const result = buildDate({} as any, '12/25/2023 12:00:00', customConfig)
+    const result = buildDate({} as Data, '12/25/2023 12:00:00', customConfig)
     expect(result).toBeInstanceOf(Date)
   })
 
   it('should return undefined for invalid date string', () => {
-    const result = buildDate({} as any, 'not a date', config)
+    const result = buildDate({} as Data, 'not a date', config)
     expect(result).toBeUndefined()
   })
 })
