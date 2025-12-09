@@ -53,12 +53,12 @@ declare class Schema<T> {
     constructor(credentials: Credentials, config: Config, clientConfig: ClientConfig, schemaId: string, dataSchema: ObjectData);
     findById(id: string): Promise<T | undefined>;
     find(properties?: Properties, rows?: Row | Row[]): Promise<T[]>;
-    create(data: Record<string, unknown>, properties?: Properties): Promise<T>;
-    createMany(dataArray: Record<string, unknown>[], properties?: Properties): Promise<T[]>;
-    update(data: Record<string, unknown>, properties?: Properties): Promise<T>;
-    updateMany(dataArray: Record<string, unknown>[], properties?: Properties): Promise<T[]>;
-    delete(data: Record<string, unknown>, properties?: Properties): Promise<T>;
-    deleteMany(dataArray: Record<string, unknown>[], properties?: Properties): Promise<T[]>;
+    create<D extends Record<string, unknown> = Record<string, unknown>>(data: D, properties?: Properties): Promise<T>;
+    createMany<D extends Record<string, unknown> = Record<string, unknown>>(dataArray: D[], properties?: Properties): Promise<T[]>;
+    update<D extends Record<string, unknown> = Record<string, unknown>>(data: D, properties?: Properties): Promise<T>;
+    updateMany<D extends Record<string, unknown> = Record<string, unknown>>(dataArray: D[], properties?: Properties): Promise<T[]>;
+    delete<D extends Record<string, unknown> = Record<string, unknown>>(data: D, properties?: Properties): Promise<T>;
+    deleteMany<D extends Record<string, unknown> = Record<string, unknown>>(dataArray: D[], properties?: Properties): Promise<T[]>;
 }
 
 declare class AppsheetClient {

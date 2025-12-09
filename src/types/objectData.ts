@@ -12,5 +12,3 @@ export interface Data {
 export interface ObjectData {
   [key: string]: Data
 }
-
-export type GenericObject = { [key: string]: unknown }

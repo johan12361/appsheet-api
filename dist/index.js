@@ -391,12 +391,12 @@ async function create(credentials, clientConfig, schemaId, config, dataSchema, d
 }
 
 // src/schema/methods/createMany.ts
-async function createMany(credentials, clientConfig, schemaId, config, dataSchema, dataArray, properties = {}) {
+async function createMany(credentials, clientConfig, schemaId, config, dataSchema, data, properties = {}) {
   let rows;
   if (config.sendRawData) {
-    rows = dataArray;
+    rows = data;
   } else {
-    rows = dataArray.map((data) => revertData(config, data, dataSchema));
+    rows = data.map((item) => revertData(config, item, dataSchema));
   }
   const response = await makeRequest(credentials, clientConfig, config, schemaId, "Add", properties, rows);
   if (config.returnRawData) {
@@ -432,23 +432,23 @@ async function update(credentials, clientConfig, schemaId, config, dataSchema, d
 }
 
 // src/schema/methods/updateMany.ts
-async function updateMany(credentials, clientConfig, schemaId, config, dataSchema, dataArray, properties = {}) {
+async function updateMany(credentials, clientConfig, schemaId, config, dataSchema, data, properties = {}) {
   const primaryKeyEntry = Object.entries(dataSchema).find(([, value]) => value.primary === true);
   if (!primaryKeyEntry) {
     throw new Error("No primary key found in schema (property with primary: true)");
   }
   const [primaryKeyName] = primaryKeyEntry;
-  for (let i = 0; i < dataArray.length; i++) {
-    const data = dataArray[i];
-    if (!(primaryKeyName in data)) {
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    if (!(primaryKeyName in item)) {
       throw new Error(`Primary key '${primaryKeyName}' does not exist in object at index ${i}`);
     }
   }
   let rows;
   if (config.sendRawData) {
-    rows = dataArray;
+    rows = data;
   } else {
-    rows = dataArray.map((data) => revertData(config, data, dataSchema));
+    rows = data.map((item) => revertData(config, item, dataSchema));
   }
   const response = await makeRequest(credentials, clientConfig, config, schemaId, "Edit", properties, rows);
   if (config.returnRawData) {
@@ -484,23 +484,23 @@ async function deleteRecord(credentials, clientConfig, schemaId, config, dataSch
 }
 
 // src/schema/methods/deleteMany.ts
-async function deleteMany(credentials, clientConfig, schemaId, config, dataSchema, dataArray, properties = {}) {
+async function deleteMany(credentials, clientConfig, schemaId, config, dataSchema, data, properties = {}) {
   const primaryKeyEntry = Object.entries(dataSchema).find(([, value]) => value.primary === true);
   if (!primaryKeyEntry) {
     throw new Error("No primary key found in schema (property with primary: true)");
   }
   const [primaryKeyName] = primaryKeyEntry;
-  for (let i = 0; i < dataArray.length; i++) {
-    const data = dataArray[i];
-    if (!(primaryKeyName in data)) {
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    if (!(primaryKeyName in item)) {
       throw new Error(`Primary key '${primaryKeyName}' does not exist in object at index ${i}`);
     }
   }
   let rows;
   if (config.sendRawData) {
-    rows = dataArray;
+    rows = data;
   } else {
-    rows = dataArray.map((data) => revertData(config, data, dataSchema));
+    rows = data.map((item) => revertData(config, item, dataSchema));
   }
   const response = await makeRequest(credentials, clientConfig, config, schemaId, "Delete", properties, rows);
   if (config.returnRawData) {
@@ -529,7 +529,15 @@ var Schema = class {
     return find(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, properties, rows);
   }
   async create(data, properties = {}) {
-    return create(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties);
+    return create(
+      this.credentials,
+      this.clientConfig,
+      this.schemaId,
+      this.config,
+      this.dataSchema,
+      data,
+      properties
+    );
   }
   async createMany(dataArray, properties = {}) {
     return createMany(
@@ -543,7 +551,15 @@ var Schema = class {
     );
   }
   async update(data, properties = {}) {
-    return update(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties);
+    return update(
+      this.credentials,
+      this.clientConfig,
+      this.schemaId,
+      this.config,
+      this.dataSchema,
+      data,
+      properties
+    );
   }
   async updateMany(dataArray, properties = {}) {
     return updateMany(

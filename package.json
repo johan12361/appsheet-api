@@ -1,6 +1,6 @@
 {
   "name": "appsheet-api",
-  "version": "0.3.3",
+  "version": "0.3.5",
   "type": "module",
   "description": "A TypeScript client for the AppSheet API",
   "main": "./dist/index.cjs",

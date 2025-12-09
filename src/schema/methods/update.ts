@@ -6,13 +6,13 @@ import type { ObjectData } from '../../types/objectData.js'
 import type { Credentials, ClientConfig, Config } from '../../types/client.js'
 import type { Properties, Row } from '../../types/request.js'
 
-export async function update<T>(
+export async function update<T, D extends Record<string, unknown> = Record<string, unknown>>(
   credentials: Credentials,
   clientConfig: ClientConfig,
   schemaId: string,
   config: Config,
   dataSchema: ObjectData,
-  data: Record<string, unknown>,
+  data: D,
   properties: Properties = {}
 ): Promise<T> {
   const primaryKeyEntry = Object.entries(dataSchema).find(([, value]) => value.primary === true)

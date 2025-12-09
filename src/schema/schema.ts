@@ -44,40 +44,11 @@ export class Schema<T> {
     return find<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, properties, rows)
   }
 
-  async create(data: Record<string, unknown>, properties: Properties = {}): Promise<T> {
-    return create<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties)
-  }
-
-  async createMany(dataArray: Record<string, unknown>[], properties: Properties = {}): Promise<T[]> {
-    return createMany<T>(
-      this.credentials,
-      this.clientConfig,
-      this.schemaId,
-      this.config,
-      this.dataSchema,
-      dataArray,
-      properties
-    )
-  }
-
-  async update(data: Record<string, unknown>, properties: Properties = {}): Promise<T> {
-    return update<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties)
-  }
-
-  async updateMany(dataArray: Record<string, unknown>[], properties: Properties = {}): Promise<T[]> {
-    return updateMany<T>(
-      this.credentials,
-      this.clientConfig,
-      this.schemaId,
-      this.config,
-      this.dataSchema,
-      dataArray,
-      properties
-    )
-  }
-
-  async delete(data: Record<string, unknown>, properties: Properties = {}): Promise<T> {
-    return deleteRecord<T>(
+  async create<D extends Record<string, unknown> = Record<string, unknown>>(
+    data: D,
+    properties: Properties = {}
+  ): Promise<T> {
+    return create<T, D>(
       this.credentials,
       this.clientConfig,
       this.schemaId,
@@ -88,8 +59,71 @@ export class Schema<T> {
     )
   }
 
-  async deleteMany(dataArray: Record<string, unknown>[], properties: Properties = {}): Promise<T[]> {
-    return deleteMany<T>(
+  async createMany<D extends Record<string, unknown> = Record<string, unknown>>(
+    dataArray: D[],
+    properties: Properties = {}
+  ): Promise<T[]> {
+    return createMany<T, D>(
+      this.credentials,
+      this.clientConfig,
+      this.schemaId,
+      this.config,
+      this.dataSchema,
+      dataArray,
+      properties
+    )
+  }
+
+  async update<D extends Record<string, unknown> = Record<string, unknown>>(
+    data: D,
+    properties: Properties = {}
+  ): Promise<T> {
+    return update<T, D>(
+      this.credentials,
+      this.clientConfig,
+      this.schemaId,
+      this.config,
+      this.dataSchema,
+      data,
+      properties
+    )
+  }
+
+  async updateMany<D extends Record<string, unknown> = Record<string, unknown>>(
+    dataArray: D[],
+    properties: Properties = {}
+  ): Promise<T[]> {
+    return updateMany<T, D>(
+      this.credentials,
+      this.clientConfig,
+      this.schemaId,
+      this.config,
+      this.dataSchema,
+      dataArray,
+      properties
+    )
+  }
+
+  async delete<D extends Record<string, unknown> = Record<string, unknown>>(
+    data: D,
+    properties: Properties = {}
+  ): Promise<T> {
+    return deleteRecord<T, D>(
+      this.credentials,
+      this.clientConfig,
+      this.schemaId,
+      this.config,
+      this.dataSchema,
+      data,
+      properties
+    )
+  }
+
+  async deleteMany<D extends Record<string, unknown> = Record<string, unknown>>(
+    dataArray: D[],
+    properties: Properties = {}
+  ): Promise<T[]> {
+    return deleteMany<T, D>(
       this.credentials,
       this.clientConfig,
       this.schemaId,

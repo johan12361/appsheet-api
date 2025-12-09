@@ -6,13 +6,13 @@ import type { ObjectData } from '../../types/objectData.js'
 import type { Credentials, ClientConfig, Config } from '../../types/client.js'
 import type { Properties, Row } from '../../types/request.js'
 
-export async function deleteMany<T>(
+export async function deleteMany<T, D extends Record<string, unknown> = Record<string, unknown>>(
   credentials: Credentials,
   clientConfig: ClientConfig,
   schemaId: string,
   config: Config,
   dataSchema: ObjectData,
-  dataArray: Record<string, unknown>[],
+  data: D[],
   properties: Properties = {}
 ): Promise<T[]> {
   const primaryKeyEntry = Object.entries(dataSchema).find(([, value]) => value.primary === true)
@@ -22,18 +22,18 @@ export async function deleteMany<T>(
 
   const [primaryKeyName] = primaryKeyEntry
 
-  for (let i = 0; i < dataArray.length; i++) {
-    const data = dataArray[i]
-    if (!(primaryKeyName in data)) {
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i]
+    if (!(primaryKeyName in item)) {
       throw new Error(`Primary key '${primaryKeyName}' does not exist in object at index ${i}`)
     }
   }
 
   let rows: Row[]
   if (config.sendRawData) {
-    rows = dataArray as Row[]
+    rows = data as Row[]
   } else {
-    rows = dataArray.map((data) => revertData(config, data, dataSchema))
+    rows = data.map((item) => revertData(config, item, dataSchema))
   }
 
   const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Delete', properties, rows)
