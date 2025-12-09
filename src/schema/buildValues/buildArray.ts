@@ -13,28 +13,24 @@ const HANDLED = {
   date: buildDate
 }
 
+function processItem(item: string, valueSchema: Data, config: Config): unknown | undefined {
+  const buildValueFunction = HANDLED[valueSchema.itemType as keyof typeof HANDLED]
+
+  if (buildValueFunction) {
+    return buildValueFunction(valueSchema, item.trim(), config)
+  }
+
+  return undefined
+}
+
 export function buildArray(valueSchema: Data, value: string | undefined, config: Config): unknown[] | undefined {
   if (value === undefined) {
-    if (valueSchema.default !== undefined) {
-      return Array.isArray(valueSchema.default) ? valueSchema.default : []
-    }
-    return []
+    return Array.isArray(valueSchema.default) ? valueSchema.default : []
   }
 
   const items = value
     .split(' , ')
-    .map((item) => {
-      const cleanItem = item.trim()
-
-      const buildValueFunction = HANDLED[valueSchema.itemType as keyof typeof HANDLED]
-      if (buildValueFunction) {
-        const builtValue = buildValueFunction(valueSchema, cleanItem, config)
-        if (builtValue !== undefined) {
-          return builtValue
-        }
-      }
-      return undefined
-    })
+    .map((item) => processItem(item, valueSchema, config))
     .filter((v) => v !== undefined)
 
   return items

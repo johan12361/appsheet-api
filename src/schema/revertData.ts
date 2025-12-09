@@ -27,7 +27,6 @@ export function revertData(config: Config, data: GenericObject, schema: ObjectDa
     const hasValue = fieldValue !== undefined
     const hasDefault = value.default !== undefined
 
-    // Skip if no value and no default
     if (!hasValue && !hasDefault) {
       continue
     }

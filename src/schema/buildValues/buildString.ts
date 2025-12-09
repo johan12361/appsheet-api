@@ -1,8 +1,5 @@
 import type { Data } from '../../types/objectData.js'
 
-export function buildString(valueSchema: Data, value: string | undefined): string | undefined {
-  if (value === undefined) {
-    return undefined
-  }
+export function buildString(_valueSchema: Data, value: string | undefined): string | undefined {
   return value
 }

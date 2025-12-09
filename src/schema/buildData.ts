@@ -24,27 +24,24 @@ export function buildData<T>(config: Config, item: AppsheetData, schema: ObjectD
   const data: Partial<T> = {}
 
   for (const [key, value] of Object.entries(schema)) {
-    let itemKey = key
-    if (value.key) {
-      itemKey = value.key
-    }
+    const itemKey = value.key ?? key
 
     if (BASIC_TYPES.includes(value.type)) {
-      if (item[itemKey] === undefined) {
+      const itemValue = item[itemKey]
+
+      if (itemValue === undefined) {
         continue
       }
 
-      const rawValue = getStringValue(item[itemKey])
-
+      const rawValue = getStringValue(itemValue)
       const buildValueFunction = BUILD_VALUE_FUNCTIONS[value.type as keyof typeof BUILD_VALUE_FUNCTIONS]
+
       if (buildValueFunction) {
         data[key as keyof T] = buildValueFunction(value, rawValue, config) as T[keyof T]
       } else {
         data[key as keyof T] = rawValue as T[keyof T]
       }
-    }
-    // process nested objects
-    else if (value.type === 'object' && value.properties && Object.keys(value.properties).length > 0) {
+    } else if (value.type === 'object' && value.properties && Object.keys(value.properties).length > 0) {
       const subData = buildData<T>(config, item, value.properties)
       data[key as keyof T] = subData as T[keyof T]
     }
@@ -70,6 +67,5 @@ function getStringValue(value: unknown): string | undefined {
     return undefined
   }
 
-  // otro tipo de valor
   return String(value)
 }

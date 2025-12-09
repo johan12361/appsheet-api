@@ -94,75 +94,56 @@ async function makeRequest(credentials, clientConfig, config, table, action, pro
 }
 
 // src/schema/buildValues/buildString.ts
-function buildString(valueSchema, value) {
-  if (value === void 0) {
-    return void 0;
-  }
+function buildString(_valueSchema, value) {
   return value;
 }
 
 // src/schema/buildValues/buildBool.ts
-var trueValues = ["true", "1", "yes", "on", "y"];
-function buildBool(valueSchema, value) {
+var TRUE_VALUES = ["true", "1", "yes", "on", "y"];
+function buildBool(_valueSchema, value) {
   if (value === void 0) {
     return void 0;
   }
-  const cleanValue = value.toLowerCase();
-  return trueValues.includes(cleanValue);
+  return TRUE_VALUES.includes(value.toLowerCase());
 }
 
 // src/schema/buildValues/buildNumber.ts
-function buildNumber(valueSchema, value) {
+function buildNumber(_valueSchema, value) {
   if (value === void 0) {
     return void 0;
   }
   const numValue = Number(value);
-  if (isNaN(numValue)) {
-    return void 0;
-  }
-  return numValue;
+  return isNaN(numValue) ? void 0 : numValue;
 }
 
 // src/schema/buildValues/buildInteger.ts
-function buildInteger(valueSchema, value) {
+function buildInteger(_valueSchema, value) {
   if (value === void 0) {
     return void 0;
   }
   const intValue = parseInt(value, 10);
-  if (isNaN(intValue)) {
-    return void 0;
-  }
-  return intValue;
+  return isNaN(intValue) ? void 0 : intValue;
 }
 
 // src/schema/buildValues/buildDate.ts
 var import_luxon = require("luxon");
-function buildDate(valueSchema, value, config) {
-  if (value === void 0) {
-    return void 0;
-  }
-  const tz = config.timezone || "UTC";
-  const dt = parseDateWithTZ(value, tz);
-  if (dt) {
-    const jsDate = dt.toJSDate();
-    return jsDate;
-  }
-  return void 0;
-}
-function parseDateWithTZ(input, tz) {
-  const formats = [
-    "MM/dd/yyyy HH:mm:ss",
-    "MM/dd/yyyy HH:mm",
-    "MM/dd/yyyy"
-    // sin hora
-  ];
-  for (const fmt of formats) {
-    const dt = import_luxon.DateTime.fromFormat(input, fmt, { zone: tz });
+var DATE_FORMATS = ["MM/dd/yyyy HH:mm:ss", "MM/dd/yyyy HH:mm", "MM/dd/yyyy"];
+function parseDate(input, timezone) {
+  for (const format of DATE_FORMATS) {
+    const dt = import_luxon.DateTime.fromFormat(input, format, { zone: timezone });
     if (dt.isValid) {
       return dt;
     }
   }
   return null;
+}
+function buildDate(_valueSchema, value, config) {
+  if (value === void 0) {
+    return void 0;
+  }
+  const timezone = config.timezone ?? "UTC";
+  const dt = parseDate(value, timezone);
+  return dt?.toJSDate();
 }
 
 // src/schema/buildValues/buildArray.ts
@@ -172,24 +153,18 @@ var HANDLED = {
   integer: buildInteger,
   date: buildDate
 };
+function processItem(item, valueSchema, config) {
+  const buildValueFunction = HANDLED[valueSchema.itemType];
+  if (buildValueFunction) {
+    return buildValueFunction(valueSchema, item.trim(), config);
+  }
+  return void 0;
+}
 function buildArray(valueSchema, value, config) {
   if (value === void 0) {
-    if (valueSchema.default !== void 0) {
-      return Array.isArray(valueSchema.default) ? valueSchema.default : [];
-    }
-    return [];
+    return Array.isArray(valueSchema.default) ? valueSchema.default : [];
   }
-  const items = value.split(" , ").map((item) => {
-    const cleanItem = item.trim();
-    const buildValueFunction = HANDLED[valueSchema.itemType];
-    if (buildValueFunction) {
-      const builtValue = buildValueFunction(valueSchema, cleanItem, config);
-      if (builtValue !== void 0) {
-        return builtValue;
-      }
-    }
-    return void 0;
-  }).filter((v) => v !== void 0);
+  const items = value.split(" , ").map((item) => processItem(item, valueSchema, config)).filter((v) => v !== void 0);
   return items;
 }
 
@@ -206,15 +181,13 @@ var BUILD_VALUE_FUNCTIONS = {
 function buildData(config, item, schema) {
   const data = {};
   for (const [key, value] of Object.entries(schema)) {
-    let itemKey = key;
-    if (value.key) {
-      itemKey = value.key;
-    }
+    const itemKey = value.key ?? key;
     if (BASIC_TYPES.includes(value.type)) {
-      if (item[itemKey] === void 0) {
+      const itemValue = item[itemKey];
+      if (itemValue === void 0) {
         continue;
       }
-      const rawValue = getStringValue(item[itemKey]);
+      const rawValue = getStringValue(itemValue);
       const buildValueFunction = BUILD_VALUE_FUNCTIONS[value.type];
       if (buildValueFunction) {
         data[key] = buildValueFunction(value, rawValue, config);
@@ -277,78 +250,61 @@ async function find(credentials, clientConfig, schemaId, config, dataSchema, pro
 
 // src/schema/revertValues/revertString.ts
 function revertString(valueSchema, value) {
-  if (value === void 0) {
-    if (valueSchema.default !== void 0) {
-      const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
-      return String(defaultValue);
-    }
+  if (value !== void 0) {
+    return String(value);
+  }
+  if (valueSchema.default === void 0) {
     return void 0;
   }
-  return String(value);
+  const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
+  return String(defaultValue);
 }
 
 // src/schema/revertValues/revertBool.ts
 function revertBool(valueSchema, value) {
-  if (value === void 0) {
-    if (valueSchema.default !== void 0) {
-      const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
-      return Boolean(defaultValue);
-    }
+  if (value !== void 0) {
+    return Boolean(value);
+  }
+  if (valueSchema.default === void 0) {
     return void 0;
   }
-  return Boolean(value);
+  const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
+  return Boolean(defaultValue);
 }
 
 // src/schema/revertValues/revertInteger.ts
+function toInteger(val) {
+  const result = parseInt(String(val), 10);
+  return isNaN(result) ? void 0 : result;
+}
 function revertInteger(valueSchema, value) {
-  if (value === void 0) {
-    if (valueSchema.default !== void 0) {
-      const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
-      const revert = parseInt(String(defaultValue), 10);
-      return isNaN(revert) ? void 0 : revert;
-    }
+  if (value !== void 0) {
+    return toInteger(value);
+  }
+  if (valueSchema.default === void 0) {
     return void 0;
   }
-  const result = parseInt(String(value), 10);
-  return isNaN(result) ? void 0 : result;
+  const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
+  return toInteger(defaultValue);
 }
 
 // src/schema/revertValues/revertNumber.ts
+function toNumber(val) {
+  const result = Number(val);
+  return isNaN(result) ? void 0 : result;
+}
 function revertNumber(valueSchema, value) {
-  if (value === void 0) {
-    if (valueSchema.default !== void 0) {
-      const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
-      const result2 = Number(defaultValue);
-      return isNaN(result2) ? void 0 : result2;
-    }
+  if (value !== void 0) {
+    return toNumber(value);
+  }
+  if (valueSchema.default === void 0) {
     return void 0;
   }
-  const result = Number(value);
-  return isNaN(result) ? void 0 : result;
+  const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
+  return toNumber(defaultValue);
 }
 
 // src/schema/revertValues/revertDate.ts
-function revertDate(valueSchema, value) {
-  if (value === void 0) {
-    if (valueSchema.default !== void 0) {
-      const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
-      if (defaultValue instanceof Date) {
-        return buildDateString(defaultValue);
-      } else if (typeof defaultValue === "string") {
-        return defaultValue;
-      }
-      return void 0;
-    }
-    return void 0;
-  }
-  if (value instanceof Date) {
-    return buildDateString(value);
-  }
-  if (typeof value === "string") {
-    return value;
-  }
-  return void 0;
-}
 function buildDateString(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -357,6 +313,25 @@ function buildDateString(date) {
   const minutes = String(date.getMinutes()).padStart(2, "0");
   const seconds = String(date.getSeconds()).padStart(2, "0");
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+function convertToDateString(val) {
+  if (val instanceof Date) {
+    return buildDateString(val);
+  }
+  if (typeof val === "string") {
+    return val;
+  }
+  return void 0;
+}
+function revertDate(valueSchema, value) {
+  if (value !== void 0) {
+    return convertToDateString(value);
+  }
+  if (valueSchema.default === void 0) {
+    return void 0;
+  }
+  const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
+  return convertToDateString(defaultValue);
 }
 
 // src/schema/revertData.ts
@@ -545,22 +520,18 @@ var Schema = class {
     this.schemaId = schemaId;
     this.dataSchema = dataSchema;
   }
-  //ss get single item
   async findById(id) {
     if (!id) {
       throw new Error("ID is required to find an item by ID.");
     }
     return findById(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, id);
   }
-  //ss get multiple items
   async find(properties = {}, rows = []) {
     return find(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, properties, rows);
   }
-  //ss create item
   async create(data, properties = {}) {
     return create(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties);
   }
-  //ss create multiple items
   async createMany(dataArray, properties = {}) {
     return createMany(
       this.credentials,
@@ -639,7 +610,6 @@ var AppsheetClient = class {
       }
     };
   }
-  //ss create schema
   createSchema(schemaId, data) {
     return new Schema(this.credentials, this.systemContext.config, this.systemContext.client, schemaId, data);
   }

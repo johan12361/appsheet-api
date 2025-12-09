@@ -17,9 +17,8 @@
     "forceConsistentCasingInFileNames": true,
     "noEmitOnError": true,
 
-    "outDir": "dist",
-    "rootDir": "src"
+    "outDir": "dist"
   },
-  "include": ["src"],
+  "include": ["src", "*.ts"],
   "exclude": ["node_modules", "dist", "playground"]
 }

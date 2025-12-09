@@ -1,6 +1,6 @@
 {
   "name": "appsheet-api",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "type": "module",
   "description": "A TypeScript client for the AppSheet API",
   "main": "./dist/index.cjs",
@@ -24,7 +24,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --dts --format esm,cjs",
+    "build": "tsup",
     "dev": "tsc --watch",
     "playground": "tsx playground/playground.ts",
     "lint": "eslint src/**/*.ts",

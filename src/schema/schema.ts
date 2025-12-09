@@ -33,7 +33,6 @@ export class Schema<T> {
     this.dataSchema = dataSchema
   }
 
-  //ss get single item
   async findById(id: string): Promise<T | undefined> {
     if (!id) {
       throw new Error('ID is required to find an item by ID.')
@@ -41,17 +40,14 @@ export class Schema<T> {
     return findById<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, id)
   }
 
-  //ss get multiple items
   async find(properties: Properties = {}, rows: Row | Row[] = []): Promise<T[]> {
     return find<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, properties, rows)
   }
 
-  //ss create item
   async create(data: GenericObject, properties: Properties = {}): Promise<T> {
     return create<T>(this.credentials, this.clientConfig, this.schemaId, this.config, this.dataSchema, data, properties)
   }
 
-  //ss create multiple items
   async createMany(dataArray: GenericObject[], properties: Properties = {}): Promise<T[]> {
     return createMany<T>(
       this.credentials,

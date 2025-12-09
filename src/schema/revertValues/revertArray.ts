@@ -12,30 +12,38 @@ const HANDLED = {
   date: revertDate
 }
 
-export function revertArray(valueSchema: Data, value: unknown | undefined): string | undefined {
-  if (value === undefined) {
-    if (valueSchema.default !== undefined) {
-      const defaultValue = typeof valueSchema.default === 'function' ? valueSchema.default() : valueSchema.default
-      if (Array.isArray(defaultValue)) {
-        return defaultValue.join(' , ')
+function processArrayToString(arr: unknown[], valueSchema: Data): string {
+  const revertValueFunction = HANDLED[valueSchema.itemType as keyof typeof HANDLED]
+
+  const items = arr
+    .map((item) => {
+      if (revertValueFunction) {
+        const revertedValue = revertValueFunction(valueSchema, item)
+        if (revertedValue !== undefined) {
+          return String(revertedValue)
+        }
       }
-    }
+      return String(item)
+    })
+    .filter((v) => v !== undefined && v !== 'undefined')
+
+  return items.join(' , ')
+}
+
+export function revertArray(valueSchema: Data, value: unknown | undefined): string | undefined {
+  if (value !== undefined && Array.isArray(value)) {
+    return processArrayToString(value, valueSchema)
+  }
+
+  if (valueSchema.default === undefined) {
     return undefined
   }
-  if (Array.isArray(value)) {
-    const items = value
-      .map((item) => {
-        const revertValueFunction = HANDLED[valueSchema.itemType as keyof typeof HANDLED]
-        if (revertValueFunction) {
-          const revertedValue = revertValueFunction(valueSchema, item)
-          if (revertedValue !== undefined) {
-            return String(revertedValue)
-          }
-        }
-        return String(item)
-      })
-      .filter((v) => v !== undefined && v !== 'undefined')
-    return items.join(' , ')
+
+  const defaultValue = typeof valueSchema.default === 'function' ? valueSchema.default() : valueSchema.default
+
+  if (Array.isArray(defaultValue)) {
+    return defaultValue.join(' , ')
   }
+
   return undefined
 }

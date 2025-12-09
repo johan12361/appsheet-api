@@ -3,37 +3,25 @@ import { DateTime } from 'luxon'
 import type { Config } from '../../types/client.js'
 import type { Data } from '../../types/objectData.js'
 
-export function buildDate(valueSchema: Data, value: string | undefined, config: Config): Date | undefined {
-  if (value === undefined) {
-    return undefined
-  }
+const DATE_FORMATS = ['MM/dd/yyyy HH:mm:ss', 'MM/dd/yyyy HH:mm', 'MM/dd/yyyy']
 
-  // esperar formato MM/DD/YYYY HH:MM:SS o solo MM/DD/YYYY
-  const tz = config.timezone || 'UTC'
-  const dt = parseDateWithTZ(value, tz)
-
-  if (dt) {
-    const jsDate = dt.toJSDate()
-    return jsDate
-  }
-
-  return undefined
-}
-
-function parseDateWithTZ(input: string, tz: string): DateTime | null {
-  const formats = [
-    'MM/dd/yyyy HH:mm:ss',
-    'MM/dd/yyyy HH:mm',
-    'MM/dd/yyyy' // sin hora
-  ]
-
-  for (const fmt of formats) {
-    const dt = DateTime.fromFormat(input, fmt, { zone: tz })
-
+function parseDate(input: string, timezone: string): DateTime | null {
+  for (const format of DATE_FORMATS) {
+    const dt = DateTime.fromFormat(input, format, { zone: timezone })
     if (dt.isValid) {
       return dt
     }
   }
-
   return null
+}
+
+export function buildDate(_valueSchema: Data, value: string | undefined, config: Config): Date | undefined {
+  if (value === undefined) {
+    return undefined
+  }
+
+  const timezone = config.timezone ?? 'UTC'
+  const dt = parseDate(value, timezone)
+
+  return dt?.toJSDate()
 }

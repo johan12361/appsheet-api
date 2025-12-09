@@ -38,7 +38,6 @@ export class AppsheetClient {
     }
   }
 
-  //ss create schema
   createSchema<T>(schemaId: string, data: ObjectData): Schema<T> {
     return new Schema<T>(this.credentials, this.systemContext.config, this.systemContext.client, schemaId, data)
   }

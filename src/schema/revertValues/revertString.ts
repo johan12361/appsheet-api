@@ -1,12 +1,14 @@
 import type { Data } from '../../types/objectData.js'
 
 export function revertString(valueSchema: Data, value: unknown | undefined): string | undefined {
-  if (value === undefined) {
-    if (valueSchema.default !== undefined) {
-      const defaultValue = typeof valueSchema.default === 'function' ? valueSchema.default() : valueSchema.default
-      return String(defaultValue)
-    }
+  if (value !== undefined) {
+    return String(value)
+  }
+
+  if (valueSchema.default === undefined) {
     return undefined
   }
-  return String(value)
+
+  const defaultValue = typeof valueSchema.default === 'function' ? valueSchema.default() : valueSchema.default
+  return String(defaultValue)
 }
