@@ -3,7 +3,7 @@ interface Data {
     type: Types;
     key?: string;
     primary?: boolean;
-    default?: unknown;
+    default?: unknown | (() => unknown);
     itemType?: 'string' | 'number' | 'integer' | 'datetime';
     properties?: {
         [key: string]: Data;

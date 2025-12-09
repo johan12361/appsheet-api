@@ -27,4 +27,13 @@ describe('revertNumber', () => {
     const result = revertNumber({} as Data, 123456.789)
     expect(result).toBe(123456.789)
   })
+
+  it('should handle function default', () => {
+    const schema: Data = {
+      type: 'number',
+      default: () => Math.PI
+    }
+    const result = revertNumber(schema, undefined)
+    expect(result).toBe(Math.PI)
+  })
 })

@@ -290,10 +290,71 @@ Each field in the schema (`Data`) can have the following properties:
 
 - **`type`** (required): Field data type. Values: `'string'`, `'number'`, `'integer'`, `'boolean'`, `'date'`, `'array'`, `'object'`
 - **`primary`** (optional, boolean): Marks the field as primary key. Default: `false`
-- **`default`** (optional, unknown): Default value if the field is not provided
+- **`default`** (optional, unknown | function): Default value if the field is not provided. Can be a static value or a function that returns a value
 - **`key`** (optional, string): Custom key for the field in AppSheet (if different from property name)
 - **`itemType`** (optional, for arrays): Type of array elements. Values: `'string'`, `'number'`, `'integer'`, `'datetime'`
 - **`properties`** (optional, for objects): Definition of nested object properties
+
+### Dynamic Default Values
+
+You can use functions to generate dynamic default values. This is useful for:
+
+- Generating unique IDs
+- Setting current timestamps
+- Computing values based on runtime conditions
+- Creating random values
+
+**Static defaults:**
+
+```typescript
+const schema: ObjectData = {
+  status: {
+    type: 'string',
+    default: 'active' // Always 'active'
+  },
+  count: {
+    type: 'integer',
+    default: 0 // Always 0
+  }
+}
+```
+
+**Dynamic defaults with functions:**
+
+```typescript
+const schema: ObjectData = {
+  id: {
+    type: 'string',
+    primary: true,
+    default: () => `USER-${Date.now()}` // Unique ID each time
+  },
+  createdAt: {
+    type: 'date',
+    default: () => new Date() // Current date/time when created
+  },
+  randomScore: {
+    type: 'number',
+    default: () => Math.random() * 100 // Random number between 0-100
+  },
+  code: {
+    type: 'string',
+    default: () => Math.random().toString(36).substring(2, 8).toUpperCase() // Random code
+  }
+}
+
+// When you create a record without providing these fields:
+const user = await users.create({
+  name: 'John Doe'
+  // id, createdAt, randomScore, and code will be generated automatically
+})
+```
+
+**Important notes:**
+
+- Functions are called each time a default value is needed
+- Functions must be synchronous (no async/await)
+- The function's return value must match the field's type
+- Works with all data types: string, number, integer, boolean, date, array
 
 #### Complete Schema Example
 
@@ -301,14 +362,15 @@ Each field in the schema (`Data`) can have the following properties:
 const productSchema: ObjectData = {
   id: {
     type: 'string',
-    primary: true // Marks this field as primary key
+    primary: true,
+    default: () => `PROD-${Date.now()}` // Auto-generate unique ID
   },
   name: {
     type: 'string'
   },
   description: {
     type: 'string',
-    default: 'No description' // Default value
+    default: 'No description' // Static default value
   },
   price: {
     type: 'number'
@@ -322,7 +384,8 @@ const productSchema: ObjectData = {
     default: true
   },
   createdAt: {
-    type: 'date'
+    type: 'date',
+    default: () => new Date() // Current timestamp when created
   },
   tags: {
     type: 'array',

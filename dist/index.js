@@ -243,7 +243,8 @@ async function find(credentials, clientConfig, schemaId, config, dataSchema, pro
 function revertString(valueSchema, value) {
   if (value === void 0) {
     if (valueSchema.default !== void 0) {
-      return String(valueSchema.default);
+      const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
+      return String(defaultValue);
     }
     return void 0;
   }
@@ -254,7 +255,8 @@ function revertString(valueSchema, value) {
 function revertBool(valueSchema, value) {
   if (value === void 0) {
     if (valueSchema.default !== void 0) {
-      return Boolean(valueSchema.default);
+      const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
+      return Boolean(defaultValue);
     }
     return void 0;
   }
@@ -265,7 +267,8 @@ function revertBool(valueSchema, value) {
 function revertInteger(valueSchema, value) {
   if (value === void 0) {
     if (valueSchema.default !== void 0) {
-      const revert = parseInt(String(valueSchema.default), 10);
+      const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
+      const revert = parseInt(String(defaultValue), 10);
       return isNaN(revert) ? void 0 : revert;
     }
     return void 0;
@@ -278,7 +281,8 @@ function revertInteger(valueSchema, value) {
 function revertNumber(valueSchema, value) {
   if (value === void 0) {
     if (valueSchema.default !== void 0) {
-      const result2 = Number(valueSchema.default);
+      const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
+      const result2 = Number(defaultValue);
       return isNaN(result2) ? void 0 : result2;
     }
     return void 0;
@@ -291,10 +295,11 @@ function revertNumber(valueSchema, value) {
 function revertDate(valueSchema, value) {
   if (value === void 0) {
     if (valueSchema.default !== void 0) {
-      if (valueSchema.default instanceof Date) {
-        return buildDateString(valueSchema.default);
-      } else if (typeof valueSchema.default === "string") {
-        return valueSchema.default;
+      const defaultValue = typeof valueSchema.default === "function" ? valueSchema.default() : valueSchema.default;
+      if (defaultValue instanceof Date) {
+        return buildDateString(defaultValue);
+      } else if (typeof defaultValue === "string") {
+        return defaultValue;
       }
       return void 0;
     }

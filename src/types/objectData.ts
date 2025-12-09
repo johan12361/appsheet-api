@@ -4,7 +4,7 @@ export interface Data {
   type: Types
   key?: string
   primary?: boolean
-  default?: unknown
+  default?: unknown | (() => unknown)
   itemType?: 'string' | 'number' | 'integer' | 'datetime' // for arrays
   properties?: { [key: string]: Data } // for objects
 }

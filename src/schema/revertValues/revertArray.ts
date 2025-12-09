@@ -14,8 +14,11 @@ const HANDLED = {
 
 export function revertArray(valueSchema: Data, value: unknown | undefined): string | undefined {
   if (value === undefined) {
-    if (valueSchema.default !== undefined && Array.isArray(valueSchema.default)) {
-      return valueSchema.default.join(' , ')
+    if (valueSchema.default !== undefined) {
+      const defaultValue = typeof valueSchema.default === 'function' ? valueSchema.default() : valueSchema.default
+      if (Array.isArray(defaultValue)) {
+        return defaultValue.join(' , ')
+      }
     }
     return undefined
   }

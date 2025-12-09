@@ -36,4 +36,31 @@ describe('revertDate', () => {
     expect(result).toBeTruthy()
     expect(typeof result).toBe('string')
   })
+
+  it('should handle function default that returns Date', () => {
+    const schema: Data = {
+      type: 'date',
+      default: () => new Date(2023, 11, 25, 10, 30, 0)
+    }
+    const result = revertDate(schema, undefined)
+    expect(result).toBe('2023-12-25 10:30:00')
+  })
+
+  it('should handle static Date default', () => {
+    const schema: Data = {
+      type: 'date',
+      default: new Date(2023, 11, 25, 10, 30, 0)
+    }
+    const result = revertDate(schema, undefined)
+    expect(result).toBe('2023-12-25 10:30:00')
+  })
+
+  it('should handle function default that returns string', () => {
+    const schema: Data = {
+      type: 'date',
+      default: () => '2023-12-25 10:30:00'
+    }
+    const result = revertDate(schema, undefined)
+    expect(result).toBe('2023-12-25 10:30:00')
+  })
 })

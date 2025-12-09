@@ -3,10 +3,13 @@ import type { Data } from '../../types/objectData.js'
 export function revertDate(valueSchema: Data, value: unknown | undefined): string | undefined {
   if (value === undefined) {
     if (valueSchema.default !== undefined) {
-      if (valueSchema.default instanceof Date) {
-        return buildDateString(valueSchema.default)
-      } else if (typeof valueSchema.default === 'string') {
-        return valueSchema.default
+      // Handle function defaults
+      const defaultValue = typeof valueSchema.default === 'function' ? valueSchema.default() : valueSchema.default
+
+      if (defaultValue instanceof Date) {
+        return buildDateString(defaultValue)
+      } else if (typeof defaultValue === 'string') {
+        return defaultValue
       }
       return undefined
     }

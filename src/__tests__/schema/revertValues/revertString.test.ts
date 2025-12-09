@@ -22,4 +22,22 @@ describe('revertString', () => {
     const result = revertString({} as Data, undefined)
     expect(result).toBeUndefined()
   })
+
+  it('should handle function default', () => {
+    const schema: Data = {
+      type: 'string',
+      default: () => 'generated-id-123'
+    }
+    const result = revertString(schema, undefined)
+    expect(result).toBe('generated-id-123')
+  })
+
+  it('should handle static default', () => {
+    const schema: Data = {
+      type: 'string',
+      default: 'default-value'
+    }
+    const result = revertString(schema, undefined)
+    expect(result).toBe('default-value')
+  })
 })

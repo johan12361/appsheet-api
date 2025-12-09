@@ -3,7 +3,8 @@ import type { Data } from '../../types/objectData.js'
 export function revertBool(valueSchema: Data, value: unknown | undefined): boolean | undefined {
   if (value === undefined) {
     if (valueSchema.default !== undefined) {
-      return Boolean(valueSchema.default)
+      const defaultValue = typeof valueSchema.default === 'function' ? valueSchema.default() : valueSchema.default
+      return Boolean(defaultValue)
     }
     return undefined
   }
