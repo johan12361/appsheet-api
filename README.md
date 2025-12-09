@@ -2,7 +2,7 @@
 
 A TypeScript client for the AppSheet API that makes it easy to interact with your AppSheet applications through a typed and user-friendly SDK.
 
-## 📦 Installation
+## Installation
 
 ```bash
 npm install appsheet-api
@@ -12,7 +12,7 @@ pnpm add appsheet-api
 yarn add appsheet-api
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ```typescript
 import { AppsheetClient } from 'appsheet-api'
@@ -48,7 +48,7 @@ const userSchema: ObjectData = {
 const users = client.createSchema('Users', userSchema)
 ```
 
-## 📖 Usage
+## Usage
 
 ### Find by ID
 
@@ -333,12 +333,15 @@ const productSchema: ObjectData = {
     type: 'object',
     properties: {
       weight: {
+        key: 'metadata_weight',
         type: 'number'
       },
       dimensions: {
+        key: 'metadata_dimensions',
         type: 'string'
       },
       manufacturer: {
+        key: 'metadata_manufacturer',
         type: 'string',
         default: 'Unknown'
       }
@@ -388,6 +391,63 @@ When **reading** from AppSheet:
 - `MM/DD/YYYY` → converts to `Date` object
 
 **Note about timezones:** Conversion respects the timezone configured in `SystemContext.config.timezone`.
+
+### Custom Column Names with `key`
+
+The `key` property allows you to map JavaScript property names to different column names in AppSheet. This is useful when:
+
+- AppSheet columns have special characters or spaces
+- You want cleaner property names in your code
+- Working with legacy databases with different naming conventions
+
+```typescript
+const productSchema: ObjectData = {
+  id: {
+    type: 'string',
+    primary: true
+  },
+  productName: {
+    type: 'string',
+    key: 'Product Name' // Maps to "Product Name" column in AppSheet
+  },
+  sku: {
+    type: 'string',
+    key: 'Product_SKU' // Maps to "Product_SKU" column in AppSheet
+  },
+  price: {
+    type: 'number',
+    key: 'Unit Price' // Maps to "Unit Price" column in AppSheet
+  }
+}
+
+// Use clean property names in your code
+const product = await products.create({
+  productName: 'Laptop', // Sent as "Product Name" to AppSheet
+  sku: 'LAP-001', // Sent as "Product_SKU" to AppSheet
+  price: 999.99 // Sent as "Unit Price" to AppSheet
+})
+```
+
+**With nested objects:**
+
+```typescript
+const orderSchema: ObjectData = {
+  id: { type: 'string', primary: true },
+  customer: {
+    type: 'object',
+    properties: {
+      fullName: {
+        type: 'string',
+        key: 'customer_full_name' // Maps to "customer_full_name" in AppSheet
+      },
+      email: {
+        type: 'string',
+        key: 'customer_email' // Maps to "customer_email" in AppSheet
+      }
+    }
+  }
+}
+```
 
 ### Working with Arrays
 
@@ -445,7 +505,7 @@ const employee = await employees.create({
 })
 ```
 
-## 🔑 Additional Properties
+## Additional Properties
 
 You can pass additional properties to operations via the `Properties` parameter. These properties are sent directly to the AppSheet API:
 
@@ -479,7 +539,7 @@ const newUser = await users.create(
 - **`Location`**: Location where the operation is performed from
 - **`Timezone`**: Specific timezone for this operation (overrides client configuration)
 
-## 📝 TypeScript Types
+## TypeScript Types
 
 The package includes complete type definitions:
 
@@ -487,7 +547,7 @@ The package includes complete type definitions:
 import type { AppsheetClient, Credentials, SystemContext, ObjectData, Data, Types } from 'appsheet-api'
 ```
 
-## 🎯 Features
+## Features
 
 - ✅ Full TypeScript support with strict types
 - ✅ Automatic data type conversion
@@ -497,15 +557,15 @@ import type { AppsheetClient, Credentials, SystemContext, ObjectData, Data, Type
 - ✅ Flexible client configuration
 - ✅ Built-in data validation
 
-## 📄 License
+## License
 
 MIT © [johan12361](https://github.com/johan12361)
 
-## 🐛 Report Issues
+## Report Issues
 
 If you find any issues, please report them at: [GitHub Issues](https://github.com/johan12361/appsheet-api/issues)
 
-## 📚 Resources
+## Resources
 
 - [AppSheet API Documentation](https://support.google.com/appsheet/answer/10105769)
 - [GitHub Repository](https://github.com/johan12361/appsheet-api)
