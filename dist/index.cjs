@@ -371,28 +371,29 @@ var REVERT_VALUE_FUNCTIONS = {
 function revertData(config, data, schema) {
   const row = {};
   for (const [key, value] of Object.entries(schema)) {
-    let itemKey = key;
-    if (value.key) {
-      itemKey = value.key;
+    const itemKey = value.key ?? key;
+    const fieldValue = data[key];
+    const hasValue = fieldValue !== void 0;
+    const hasDefault = value.default !== void 0;
+    if (!hasValue && !hasDefault) {
+      continue;
     }
     if (BASIC_TYPES2.includes(value.type)) {
-      if (data[key] === void 0) {
-        continue;
-      }
       const revertValueFunction = REVERT_VALUE_FUNCTIONS[value.type];
       if (revertValueFunction) {
-        row[itemKey] = revertValueFunction(value, data[key]);
-      } else {
-        row[itemKey] = data[key];
+        const revertedValue = revertValueFunction(value, fieldValue);
+        if (revertedValue !== void 0) {
+          row[itemKey] = revertedValue;
+        }
+      } else if (hasValue) {
+        row[itemKey] = fieldValue;
       }
     } else if (value.type === "object" && value.properties && Object.keys(value.properties).length > 0) {
-      if (data[key] === void 0) {
+      if (!hasValue) {
         continue;
       }
-      const subData = revertData(config, data[key], value.properties);
-      for (const [subKey, subValue] of Object.entries(subData)) {
-        row[subKey] = subValue;
-      }
+      const subData = revertData(config, fieldValue, value.properties);
+      Object.assign(row, subData);
     }
   }
   return row;

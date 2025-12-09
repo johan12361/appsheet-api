@@ -105,4 +105,114 @@ describe('revertData', () => {
       count: 42
     })
   })
+
+  it('should handle function defaults for missing fields', () => {
+    const schema: ObjectData = {
+      id: {
+        type: 'string',
+        default: () => 'generated-id-123'
+      },
+      createdAt: {
+        type: 'date',
+        default: () => new Date(2023, 11, 25, 10, 30, 0)
+      },
+      score: {
+        type: 'number',
+        default: () => 100
+      },
+      name: {
+        type: 'string'
+      }
+    }
+
+    const item: GenericObject = {
+      name: 'Test User'
+      // id, createdAt, and score will use function defaults
+    }
+
+    const result = revertData(config, item, schema)
+    expect(result).toEqual({
+      id: 'generated-id-123',
+      createdAt: '2023-12-25 10:30:00',
+      score: 100,
+      name: 'Test User'
+    })
+  })
+
+  it('should skip fields with undefined values and no defaults', () => {
+    // revertData skips processing when data[key] === undefined and no default exists
+    const schema: ObjectData = {
+      id: {
+        type: 'string'
+        // No default provided
+      },
+      name: {
+        type: 'string'
+      }
+    }
+
+    const item: GenericObject = {
+      id: undefined, // This will be skipped by revertData
+      name: 'Test User'
+    }
+
+    const result = revertData(config, item, schema)
+    // id is skipped because data[key] === undefined and no default
+    expect(result).toEqual({
+      name: 'Test User'
+    })
+    expect(result).not.toHaveProperty('id')
+  })
+
+  it('should not call function defaults when values are provided', () => {
+    let functionCalled = false
+    const schema: ObjectData = {
+      name: {
+        type: 'string',
+        default: () => {
+          functionCalled = true
+          return 'default-name'
+        }
+      }
+    }
+
+    const item: GenericObject = {
+      name: 'Actual Name'
+    }
+
+    const result = revertData(config, item, schema)
+    expect(result).toEqual({
+      name: 'Actual Name'
+    })
+    expect(functionCalled).toBe(false)
+  })
+
+  it('should handle mixed static and dynamic defaults', () => {
+    // This test demonstrates that defaults work when fields are missing
+    const schema: ObjectData = {
+      status: {
+        type: 'string',
+        default: 'active'
+      },
+      code: {
+        type: 'string',
+        default: () => 'DYN-123'
+      },
+      name: {
+        type: 'string'
+      }
+    }
+
+    const item: GenericObject = {
+      name: 'Test User'
+      // status and code not provided - defaults will be applied
+    }
+
+    const result = revertData(config, item, schema)
+    expect(result).toEqual({
+      status: 'active',
+      code: 'DYN-123',
+      name: 'Test User'
+    })
+  })
 })

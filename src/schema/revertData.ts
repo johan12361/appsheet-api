@@ -20,34 +20,38 @@ const REVERT_VALUE_FUNCTIONS = {
 
 export function revertData(config: Config, data: GenericObject, schema: ObjectData): Row {
   const row: Row = {}
+
   for (const [key, value] of Object.entries(schema)) {
-    let itemKey = key
-    if (value.key) {
-      itemKey = value.key
+    const itemKey = value.key ?? key
+    const fieldValue = data[key]
+    const hasValue = fieldValue !== undefined
+    const hasDefault = value.default !== undefined
+
+    // Skip if no value and no default
+    if (!hasValue && !hasDefault) {
+      continue
     }
 
     if (BASIC_TYPES.includes(value.type)) {
-      if (data[key] === undefined) {
-        continue
-      }
-
       const revertValueFunction = REVERT_VALUE_FUNCTIONS[value.type as keyof typeof REVERT_VALUE_FUNCTIONS]
+
       if (revertValueFunction) {
-        row[itemKey as keyof Row] = revertValueFunction(value, data[key]) as Row[keyof Row]
-      } else {
-        row[itemKey as keyof Row] = data[key] as Row[keyof Row]
+        const revertedValue = revertValueFunction(value, fieldValue)
+
+        if (revertedValue !== undefined) {
+          row[itemKey as keyof Row] = revertedValue as Row[keyof Row]
+        }
+      } else if (hasValue) {
+        row[itemKey as keyof Row] = fieldValue as Row[keyof Row]
       }
     } else if (value.type === 'object' && value.properties && Object.keys(value.properties).length > 0) {
-      if (data[key] === undefined) {
+      if (!hasValue) {
         continue
       }
 
-      const subData = revertData(config, data[key] as GenericObject, value.properties)
+      const subData = revertData(config, fieldValue as GenericObject, value.properties)
 
-      // agregar subData al row principal
-      for (const [subKey, subValue] of Object.entries(subData)) {
-        row[subKey as keyof Row] = subValue as Row[keyof Row]
-      }
+      Object.assign(row, subData)
     }
   }
 
