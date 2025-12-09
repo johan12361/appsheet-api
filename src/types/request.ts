@@ -3,6 +3,7 @@ export type Row = Record<string, string>
 export interface Properties {
   Selector?: string
   UserSettings?: Record<string, string>
+  [key: string]: unknown
 }
 
 // formato transformado de los datos desde Appsheet
