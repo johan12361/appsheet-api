@@ -33,7 +33,7 @@ export async function deleteRecord<T>(
     row = revertData(config, data, dataSchema)
   }
 
-  const response = await makeRequest(credentials, clientConfig, schemaId, 'Delete', properties, row)
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Delete', properties, row)
 
   const singleItem = response[0]
 

@@ -22,7 +22,7 @@ export async function create<T>(
     row = revertData(config, data, dataSchema)
   }
 
-  const response = await makeRequest(credentials, clientConfig, schemaId, 'Add', properties, row)
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Add', properties, row)
 
   const singleItem = response[0]
 

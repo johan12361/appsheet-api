@@ -15,7 +15,7 @@ export async function find<T>(
   rows: Row | Row[] = []
 ): Promise<T[]> {
   // make request
-  const response = await makeRequest(credentials, clientConfig, schemaId, 'Find', properties, rows)
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Find', properties, rows)
 
   // return raw data if config.returnRawData is true
   if (config.returnRawData) {

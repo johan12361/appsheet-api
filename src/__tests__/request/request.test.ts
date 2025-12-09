@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import axios from 'axios'
 import { makeRequest } from '../../request/request.js'
-import type { Credentials, ClientConfig } from '../../types/client.js'
+import type { Credentials, ClientConfig, Config } from '../../types/client.js'
 import type { Row } from '../../types/request.js'
 
 // Mock axios
@@ -17,6 +17,12 @@ describe('makeRequest', () => {
     url: 'https://www.appsheet.com',
     locale: 'en-GB',
     timezone: 'UTC'
+  }
+
+  const config: Config = {
+    timezone: 'UTC',
+    returnRawData: false,
+    sendRawData: false
   }
 
   beforeEach(() => {
@@ -37,7 +43,7 @@ describe('makeRequest', () => {
     vi.mocked(axios.post).mockResolvedValue(mockResponse)
 
     const row: Row = { id: '1' }
-    const result = await makeRequest(credentials, clientConfig, 'Users', 'Find', {}, row)
+    const result = await makeRequest(credentials, clientConfig, config, 'Users', 'Find', {}, row)
 
     expect(axios.post).toHaveBeenCalledWith(
       'https://www.appsheet.com/api/v2/apps/test-app-id/tables/Users/Action?applicationAccessKey=test-api-key',
@@ -72,7 +78,7 @@ describe('makeRequest', () => {
     vi.mocked(axios.post).mockResolvedValue(mockResponse)
 
     const rows: Row[] = [{ id: '1' }, { id: '2' }]
-    const result = await makeRequest(credentials, clientConfig, 'Users', 'Find', {}, rows)
+    const result = await makeRequest(credentials, clientConfig, config, 'Users', 'Find', {}, rows)
 
     expect(result).toEqual([
       { id: '1', name: 'User 1' },
@@ -94,7 +100,7 @@ describe('makeRequest', () => {
       UserEmail: 'admin@example.com'
     }
 
-    await makeRequest(credentials, clientConfig, 'Users', 'Find', properties, { id: '1' })
+    await makeRequest(credentials, clientConfig, config, 'Users', 'Find', properties, { id: '1' })
 
     expect(axios.post).toHaveBeenCalledWith(
       expect.any(String),
@@ -117,7 +123,7 @@ describe('makeRequest', () => {
 
     vi.mocked(axios.post).mockResolvedValue(mockResponse)
 
-    const result = await makeRequest(credentials, clientConfig, 'Users', 'Find', {}, { id: '1' })
+    const result = await makeRequest(credentials, clientConfig, config, 'Users', 'Find', {}, { id: '1' })
 
     expect(result).toEqual([{ id: '1', name: 'Test User' }])
   })
@@ -129,7 +135,7 @@ describe('makeRequest', () => {
 
     vi.mocked(axios.post).mockResolvedValue(mockResponse)
 
-    const result = await makeRequest(credentials, clientConfig, 'Users', 'Find', {}, { id: '1' })
+    const result = await makeRequest(credentials, clientConfig, config, 'Users', 'Find', {}, { id: '1' })
 
     expect(result).toEqual([{ id: '1', name: 'Test User' }])
   })
@@ -138,7 +144,7 @@ describe('makeRequest', () => {
     const mockError = new Error('Network error')
     vi.mocked(axios.post).mockRejectedValue(mockError)
 
-    await expect(makeRequest(credentials, clientConfig, 'Users', 'Find', {}, { id: '1' })).rejects.toThrow(
+    await expect(makeRequest(credentials, clientConfig, config, 'Users', 'Find', {}, { id: '1' })).rejects.toThrow(
       'Network error'
     )
   })
@@ -150,7 +156,7 @@ describe('makeRequest', () => {
 
     vi.mocked(axios.post).mockResolvedValue(mockResponse)
 
-    await expect(makeRequest(credentials, clientConfig, 'Users', 'Find', {}, { id: '1' })).rejects.toThrow(
+    await expect(makeRequest(credentials, clientConfig, config, 'Users', 'Find', {}, { id: '1' })).rejects.toThrow(
       'AppSheet response does not contain data'
     )
   })
@@ -164,7 +170,7 @@ describe('makeRequest', () => {
 
     vi.mocked(axios.post).mockResolvedValue(mockResponse)
 
-    await makeRequest(credentials, clientConfig, 'Users', 'Add', {}, { name: 'New User' })
+    await makeRequest(credentials, clientConfig, config, 'Users', 'Add', {}, { name: 'New User' })
 
     expect(axios.post).toHaveBeenCalledWith(
       expect.any(String),

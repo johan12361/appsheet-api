@@ -9,7 +9,9 @@ const defaultSystemContext: SystemContext = {
   config: {
     timezone: 'UTC',
     returnRawData: false,
-    sendRawData: false
+    sendRawData: false,
+    maxRetriesOnRateLimit: 3,
+    retryDelay: 1000
   },
   client: {
     url: 'https://www.appsheet.com',

@@ -13,6 +13,8 @@ export interface Config {
   timezone?: string
   returnRawData?: boolean
   sendRawData?: boolean
+  maxRetriesOnRateLimit?: number
+  retryDelay?: number
   //NEXT ADD OTHER CONFIG OPTIONS
 }
 

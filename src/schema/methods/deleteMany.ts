@@ -36,7 +36,7 @@ export async function deleteMany<T>(
     rows = dataArray.map((data) => revertData(config, data, dataSchema))
   }
 
-  const response = await makeRequest(credentials, clientConfig, schemaId, 'Delete', properties, rows)
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Delete', properties, rows)
 
   if (config.returnRawData) {
     return response as unknown as T[]

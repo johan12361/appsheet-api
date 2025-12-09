@@ -49,7 +49,10 @@ async function catchError(Promise2) {
 var catchError_default = catchError;
 
 // src/request/request.ts
-async function makeRequest(credentials, clientConfig, table, action, properties = {}, rows) {
+async function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+async function makeRequest(credentials, clientConfig, config, table, action, properties = {}, rows) {
   const apiUrl = `${clientConfig.url}/api/v2/apps/${credentials.appId}/tables/${table}/Action?applicationAccessKey=${credentials.apiKey}`;
   const headers = {
     "Content-Type": "application/json"
@@ -63,19 +66,31 @@ async function makeRequest(credentials, clientConfig, table, action, properties 
     },
     Rows: !Array.isArray(rows) ? [rows] : rows
   };
-  const [error, response] = await catchError_default(import_axios.default.post(apiUrl, body, { headers }));
-  if (error) {
-    throw error;
+  const maxRetries = config.maxRetriesOnRateLimit ?? 3;
+  const retryDelay = config.retryDelay ?? 1e3;
+  let lastError = null;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const [error, response] = await catchError_default(import_axios.default.post(apiUrl, body, { headers }));
+    if (error) {
+      if (import_axios.default.isAxiosError(error) && error.response?.status === 429) {
+        lastError = error;
+        if (attempt < maxRetries) {
+          await sleep(retryDelay * (attempt + 1));
+          continue;
+        }
+      }
+      throw error;
+    }
+    if (!response?.data) {
+      throw new Error("AppSheet response does not contain data");
+    }
+    if (response.data.Rows && Array.isArray(response.data.Rows)) {
+      return response.data.Rows;
+    }
+    const toArray = Array.isArray(response.data) ? response.data : [response.data];
+    return toArray;
   }
-  if (!response?.data) {
-    throw new Error("AppSheet response does not contain data");
-  }
-  if (response.data.Rows && Array.isArray(response.data.Rows)) {
-    return response.data.Rows;
-  }
-  const toArray = Array.isArray(response.data) ? response.data : [response.data];
-  return toArray;
-  return toArray;
+  throw lastError;
 }
 
 // src/schema/buildValues/buildString.ts
@@ -238,7 +253,7 @@ async function findById(credentials, clientConfig, schemaId, config, dataSchema,
   }
   const key = dataSchema[idKey].key || idKey;
   const row = { [key]: id };
-  const response = await makeRequest(credentials, clientConfig, schemaId, "Find", {}, row);
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, "Find", {}, row);
   if (response.length === 0) {
     return void 0;
   }
@@ -252,7 +267,7 @@ async function findById(credentials, clientConfig, schemaId, config, dataSchema,
 
 // src/schema/methods/find.ts
 async function find(credentials, clientConfig, schemaId, config, dataSchema, properties = {}, rows = []) {
-  const response = await makeRequest(credentials, clientConfig, schemaId, "Find", properties, rows);
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, "Find", properties, rows);
   if (config.returnRawData) {
     return response;
   }
@@ -386,7 +401,7 @@ async function create(credentials, clientConfig, schemaId, config, dataSchema, d
   } else {
     row = revertData(config, data, dataSchema);
   }
-  const response = await makeRequest(credentials, clientConfig, schemaId, "Add", properties, row);
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, "Add", properties, row);
   const singleItem = response[0];
   if (config.returnRawData) {
     return singleItem;
@@ -403,7 +418,7 @@ async function createMany(credentials, clientConfig, schemaId, config, dataSchem
   } else {
     rows = dataArray.map((data) => revertData(config, data, dataSchema));
   }
-  const response = await makeRequest(credentials, clientConfig, schemaId, "Add", properties, rows);
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, "Add", properties, rows);
   if (config.returnRawData) {
     return response;
   }
@@ -427,7 +442,7 @@ async function update(credentials, clientConfig, schemaId, config, dataSchema, d
   } else {
     row = revertData(config, data, dataSchema);
   }
-  const response = await makeRequest(credentials, clientConfig, schemaId, "Edit", properties, row);
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, "Edit", properties, row);
   const singleItem = response[0];
   if (config.returnRawData) {
     return singleItem;
@@ -455,7 +470,7 @@ async function updateMany(credentials, clientConfig, schemaId, config, dataSchem
   } else {
     rows = dataArray.map((data) => revertData(config, data, dataSchema));
   }
-  const response = await makeRequest(credentials, clientConfig, schemaId, "Edit", properties, rows);
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, "Edit", properties, rows);
   if (config.returnRawData) {
     return response;
   }
@@ -479,7 +494,7 @@ async function deleteRecord(credentials, clientConfig, schemaId, config, dataSch
   } else {
     row = revertData(config, data, dataSchema);
   }
-  const response = await makeRequest(credentials, clientConfig, schemaId, "Delete", properties, row);
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, "Delete", properties, row);
   const singleItem = response[0];
   if (config.returnRawData) {
     return singleItem;
@@ -507,7 +522,7 @@ async function deleteMany(credentials, clientConfig, schemaId, config, dataSchem
   } else {
     rows = dataArray.map((data) => revertData(config, data, dataSchema));
   }
-  const response = await makeRequest(credentials, clientConfig, schemaId, "Delete", properties, rows);
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, "Delete", properties, rows);
   if (config.returnRawData) {
     return response;
   }
@@ -594,7 +609,9 @@ var defaultSystemContext = {
   config: {
     timezone: "UTC",
     returnRawData: false,
-    sendRawData: false
+    sendRawData: false,
+    maxRetriesOnRateLimit: 3,
+    retryDelay: 1e3
   },
   client: {
     url: "https://www.appsheet.com",

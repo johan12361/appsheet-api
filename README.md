@@ -238,7 +238,9 @@ const client = new AppsheetClient(
     config: {
       timezone: 'America/New_York', // Timezone for dates
       returnRawData: false, // Return unprocessed data
-      sendRawData: false // Send unprocessed data
+      sendRawData: false, // Send unprocessed data
+      maxRetriesOnRateLimit: 3, // Maximum retry attempts on rate limit errors
+      retryDelay: 1000 // Base delay in ms between retries (uses exponential backoff)
     },
     client: {
       url: 'https://www.appsheet.com', // AppSheet API base URL
@@ -261,6 +263,8 @@ const client = new AppsheetClient(
 - **`timezone`** (string): Timezone for date handling. Example: `'America/New_York'`, `'UTC'`, `'Europe/London'`. Default: `'UTC'`
 - **`returnRawData`** (boolean): If `true`, returns data as received from the API without processing. Useful for debugging. Default: `false`
 - **`sendRawData`** (boolean): If `true`, sends data without transformation to AppSheet format. Default: `false`
+- **`maxRetriesOnRateLimit`** (number): Maximum number of automatic retry attempts when receiving HTTP 429 (rate limit) errors. Default: `3`
+- **`retryDelay`** (number): Base delay in milliseconds between retry attempts. Uses exponential backoff (delay × attempt number). Default: `1000`
 
 ##### `SystemContext.client` (optional)
 

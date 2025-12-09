@@ -83,6 +83,7 @@ describe('Schema Methods', () => {
       expect(requestModule.makeRequest).toHaveBeenCalledWith(
         credentials,
         clientConfig,
+        config,
         'Users',
         'Add',
         {},
@@ -110,7 +111,15 @@ describe('Schema Methods', () => {
 
       await create(credentials, clientConfig, 'Users', rawConfig, userSchema, data)
 
-      expect(requestModule.makeRequest).toHaveBeenCalledWith(credentials, clientConfig, 'Users', 'Add', {}, data)
+      expect(requestModule.makeRequest).toHaveBeenCalledWith(
+        credentials,
+        clientConfig,
+        rawConfig,
+        'Users',
+        'Add',
+        {},
+        data
+      )
     })
 
     it('should handle returnRawData config', async () => {
@@ -137,6 +146,7 @@ describe('Schema Methods', () => {
       expect(requestModule.makeRequest).toHaveBeenCalledWith(
         credentials,
         clientConfig,
+        config,
         'Users',
         'Add',
         properties,
@@ -168,7 +178,7 @@ describe('Schema Methods', () => {
 
       const result = await find<User>(credentials, clientConfig, 'Users', config, userSchema)
 
-      expect(requestModule.makeRequest).toHaveBeenCalledWith(credentials, clientConfig, 'Users', 'Find', {}, [])
+      expect(requestModule.makeRequest).toHaveBeenCalledWith(credentials, clientConfig, config, 'Users', 'Find', {}, [])
 
       expect(result).toHaveLength(2)
       expect(result[0]).toEqual({
@@ -197,7 +207,15 @@ describe('Schema Methods', () => {
 
       const result = await find<User>(credentials, clientConfig, 'Users', config, userSchema, properties)
 
-      expect(requestModule.makeRequest).toHaveBeenCalledWith(credentials, clientConfig, 'Users', 'Find', properties, [])
+      expect(requestModule.makeRequest).toHaveBeenCalledWith(
+        credentials,
+        clientConfig,
+        config,
+        'Users',
+        'Find',
+        properties,
+        []
+      )
 
       expect(result).toHaveLength(1)
       expect(result[0].age).toBe(25)
@@ -220,7 +238,15 @@ describe('Schema Methods', () => {
 
       const result = await find<User>(credentials, clientConfig, 'Users', config, userSchema, {}, rows)
 
-      expect(requestModule.makeRequest).toHaveBeenCalledWith(credentials, clientConfig, 'Users', 'Find', {}, rows)
+      expect(requestModule.makeRequest).toHaveBeenCalledWith(
+        credentials,
+        clientConfig,
+        config,
+        'Users',
+        'Find',
+        {},
+        rows
+      )
 
       expect(result).toHaveLength(1)
       expect(result[0].id).toBe('123')
@@ -265,6 +291,7 @@ describe('Schema Methods', () => {
       expect(requestModule.makeRequest).toHaveBeenCalledWith(
         credentials,
         clientConfig,
+        config,
         'Users',
         'Find',
         {},
@@ -317,6 +344,7 @@ describe('Schema Methods', () => {
       expect(requestModule.makeRequest).toHaveBeenCalledWith(
         credentials,
         clientConfig,
+        config,
         'Users',
         'Find',
         {},

@@ -36,7 +36,7 @@ export async function updateMany<T>(
     rows = dataArray.map((data) => revertData(config, data, dataSchema))
   }
 
-  const response = await makeRequest(credentials, clientConfig, schemaId, 'Edit', properties, rows)
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Edit', properties, rows)
 
   if (config.returnRawData) {
     return response as unknown as T[]

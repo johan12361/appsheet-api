@@ -147,6 +147,7 @@ describe('Schema', () => {
       expect(requestModule.makeRequest).toHaveBeenCalledWith(
         credentials,
         clientConfig,
+        config,
         'Users',
         'Add',
         {},
@@ -171,6 +172,7 @@ describe('Schema', () => {
       expect(requestModule.makeRequest).toHaveBeenCalledWith(
         credentials,
         clientConfig,
+        config,
         'Users',
         'Add',
         { UserEmail: 'admin@test.com' },
@@ -225,6 +227,7 @@ describe('Schema', () => {
       expect(requestModule.makeRequest).toHaveBeenCalledWith(
         credentials,
         clientConfig,
+        config,
         'Users',
         'Edit',
         {},
@@ -249,6 +252,7 @@ describe('Schema', () => {
       expect(requestModule.makeRequest).toHaveBeenCalledWith(
         credentials,
         clientConfig,
+        config,
         'Users',
         'Edit',
         { UserEmail: 'admin@test.com' },
@@ -299,6 +303,7 @@ describe('Schema', () => {
       expect(requestModule.makeRequest).toHaveBeenCalledWith(
         credentials,
         clientConfig,
+        config,
         'Users',
         'Delete',
         {},
@@ -323,6 +328,7 @@ describe('Schema', () => {
       expect(requestModule.makeRequest).toHaveBeenCalledWith(
         credentials,
         clientConfig,
+        config,
         'Users',
         'Delete',
         { UserEmail: 'admin@test.com' },

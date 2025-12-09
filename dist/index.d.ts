@@ -29,6 +29,8 @@ interface Config {
     timezone?: string;
     returnRawData?: boolean;
     sendRawData?: boolean;
+    maxRetriesOnRateLimit?: number;
+    retryDelay?: number;
 }
 interface SystemContext {
     client: ClientConfig;

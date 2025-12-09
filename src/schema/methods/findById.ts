@@ -23,7 +23,7 @@ export async function findById<T>(
   const row: Row = { [key]: id }
 
   // make request
-  const response = await makeRequest(credentials, clientConfig, schemaId, 'Find', {}, row)
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Find', {}, row)
 
   // check if response is empty
   if (response.length === 0) {

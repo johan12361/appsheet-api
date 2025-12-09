@@ -33,7 +33,7 @@ export async function update<T>(
     row = revertData(config, data, dataSchema)
   }
 
-  const response = await makeRequest(credentials, clientConfig, schemaId, 'Edit', properties, row)
+  const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Edit', properties, row)
 
   const singleItem = response[0]
 
