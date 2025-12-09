@@ -29,9 +29,9 @@ export function revertArray(valueSchema: Data, value: unknown | undefined): stri
             return String(revertedValue)
           }
         }
-        return undefined
+        return String(item)
       })
-      .filter((v) => v !== undefined)
+      .filter((v) => v !== undefined && v !== 'undefined')
     return items.join(' , ')
   }
   return undefined

@@ -20,39 +20,29 @@ const REVERT_VALUE_FUNCTIONS = {
 
 export function revertData(config: Config, data: GenericObject, schema: ObjectData): Row {
   const row: Row = {}
-  // recorrer el esquema de datos
   for (const [key, value] of Object.entries(schema)) {
     let itemKey = key
-    // renombrar key si es necesario
     if (value.key) {
       itemKey = value.key
     }
 
-    // procesar solo tipos básicos
     if (BASIC_TYPES.includes(value.type)) {
-      // validar si la key existe en el item
-      if (data[itemKey] === undefined) {
+      if (data[key] === undefined) {
         continue
       }
 
-      // revertir valor según tipo
       const revertValueFunction = REVERT_VALUE_FUNCTIONS[value.type as keyof typeof REVERT_VALUE_FUNCTIONS]
       if (revertValueFunction) {
-        // construir valor usando la función correspondiente
-        row[itemKey as keyof Row] = revertValueFunction(value, data[itemKey]) as Row[keyof Row]
+        row[itemKey as keyof Row] = revertValueFunction(value, data[key]) as Row[keyof Row]
       } else {
-        // asignar valor directamente
-        row[itemKey as keyof Row] = data[itemKey] as Row[keyof Row]
+        row[itemKey as keyof Row] = data[key] as Row[keyof Row]
       }
-    }
-    // procesar objetos anidados
-    else if (value.type === 'object' && value.properties && Object.keys(value.properties).length > 0) {
-      // validar si el objeto existe en los datos
-      if (data[itemKey] === undefined) {
+    } else if (value.type === 'object' && value.properties && Object.keys(value.properties).length > 0) {
+      if (data[key] === undefined) {
         continue
       }
 
-      const subData = revertData(config, data[itemKey] as GenericObject, value.properties)
+      const subData = revertData(config, data[key] as GenericObject, value.properties)
 
       // agregar subData al row principal
       for (const [subKey, subValue] of Object.entries(subData)) {

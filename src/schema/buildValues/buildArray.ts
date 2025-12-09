@@ -21,14 +21,11 @@ export function buildArray(valueSchema: Data, value: string | undefined, config:
     return []
   }
 
-  // dividir el string por comas y limpiar espacios
   const items = value
     .split(' , ')
     .map((item) => {
-      // limpiar espacios
       const cleanItem = item.trim()
 
-      // construir el valor según el tipo de item
       const buildValueFunction = HANDLED[valueSchema.itemType as keyof typeof HANDLED]
       if (buildValueFunction) {
         const builtValue = buildValueFunction(valueSchema, cleanItem, config)

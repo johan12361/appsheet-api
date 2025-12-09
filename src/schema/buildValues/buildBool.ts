@@ -7,9 +7,6 @@ export function buildBool(valueSchema: Data, value: string | undefined): boolean
     return undefined
   }
 
-  // convertir string a boolean
   const cleanValue = value.toLowerCase()
-
-  // Verificar si el valor está en la lista de valores verdaderos
   return trueValues.includes(cleanValue)
 }
