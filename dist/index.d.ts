@@ -21,6 +21,7 @@ interface ClientConfig {
     url?: string;
     locale?: 'en-US' | 'en-GB';
     timezone?: string;
+    userSettings?: Record<string, unknown>;
 }
 interface Config {
     timezone?: string;

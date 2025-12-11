@@ -26,6 +26,7 @@ async function makeRequest(credentials, clientConfig, config, table, action, pro
     Properties: {
       Locale: clientConfig.locale,
       Timezone: clientConfig.timezone,
+      UserSettings: clientConfig.userSettings,
       ...properties
     },
     Rows: !Array.isArray(rows) ? [rows] : rows
@@ -592,7 +593,8 @@ var defaultSystemContext = {
   client: {
     url: "https://www.appsheet.com",
     locale: "en-GB",
-    timezone: process.env.TZ || "UTC"
+    timezone: process.env.TZ || "UTC",
+    userSettings: {}
   }
 };
 var AppsheetClient = class {

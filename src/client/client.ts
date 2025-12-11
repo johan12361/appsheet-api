@@ -16,7 +16,8 @@ const defaultSystemContext: SystemContext = {
   client: {
     url: 'https://www.appsheet.com',
     locale: 'en-GB',
-    timezone: process.env.TZ || 'UTC'
+    timezone: process.env.TZ || 'UTC',
+    userSettings: {}
   }
 }
 

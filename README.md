@@ -271,6 +271,8 @@ const client = new AppsheetClient(
 - **`url`** (string): AppSheet API base URL. Default: `'https://www.appsheet.com'`
 - **`locale`** (string): Regional configuration for data formatting. Options: `'en-US'`, `'en-GB'`. Default: `'en-GB'`
 - **`timezone`** (string): Client timezone. Default: `TZ` environment variable or `'UTC'`
+- **`userSettings`** (object): User-specific settings that can be accessed in AppSheet expressions using `USERSETTINGS()`. See [UserSettings documentation](https://support.google.com/appsheet/answer/10104797)
+
 
 ### Schema Definition
 

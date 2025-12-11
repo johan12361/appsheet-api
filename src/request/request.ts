@@ -29,6 +29,7 @@ export async function makeRequest(
     Properties: {
       Locale: clientConfig.locale,
       Timezone: clientConfig.timezone,
+      UserSettings: clientConfig.userSettings,
       ...properties
     },
     Rows: !Array.isArray(rows) ? [rows] : rows
