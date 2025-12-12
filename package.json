@@ -31,7 +31,7 @@
     "lint:fix": "eslint src/**/*.ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
-    "test": "vitest",
+    "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "prepublishOnly": "pnpm typecheck && pnpm lint && pnpm test:run && pnpm build"
   },
