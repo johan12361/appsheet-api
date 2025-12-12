@@ -222,7 +222,7 @@ console.log('Users deleted:', deletedUsers)
 - Each object should include only its primary key
 - Automations are invoked separately for each deleted row
 
-## 🔧 Advanced Configuration
+## Advanced Configuration
 
 ### Client Configuration
 
@@ -245,7 +245,11 @@ const client = new AppsheetClient(
     client: {
       url: 'https://www.appsheet.com', // AppSheet API base URL
       locale: 'en-US', // Regional settings
-      timezone: 'America/New_York' // Client timezone
+      timezone: 'America/New_York', // Client timezone
+      userSettings: {
+        option1: 'option1',
+        option2: 'option2'
+      }
     }
   }
 )
@@ -272,7 +276,6 @@ const client = new AppsheetClient(
 - **`locale`** (string): Regional configuration for data formatting. Options: `'en-US'`, `'en-GB'`. Default: `'en-GB'`
 - **`timezone`** (string): Client timezone. Default: `TZ` environment variable or `'UTC'`
 - **`userSettings`** (object): User-specific settings that can be accessed in AppSheet expressions using `USERSETTINGS()`. See [UserSettings documentation](https://support.google.com/appsheet/answer/10104797)
-
 
 ### Schema Definition
 

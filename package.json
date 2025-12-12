@@ -1,6 +1,6 @@
 {
   "name": "appsheet-api",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "type": "module",
   "description": "A TypeScript client for the AppSheet API",
   "main": "./dist/index.cjs",
@@ -32,8 +32,6 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "test:ui": "vitest --ui",
-    "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
     "prepublishOnly": "pnpm typecheck && pnpm lint && pnpm test:run && pnpm build"
   },
