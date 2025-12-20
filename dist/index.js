@@ -343,14 +343,14 @@ var REVERT_VALUE_FUNCTIONS = {
   array: revertArray,
   date: revertDate
 };
-function revertData(config, data, schema) {
+function revertData(config, data, schema, setDefault = true) {
   const row = {};
   for (const [key, value] of Object.entries(schema)) {
     const itemKey = value.key ?? key;
     const fieldValue = data[key];
     const hasValue = fieldValue !== void 0;
     const hasDefault = value.default !== void 0;
-    if (!hasValue && !hasDefault) {
+    if (!hasValue && !(setDefault && hasDefault)) {
       continue;
     }
     if (BASIC_TYPES2.includes(value.type)) {
@@ -367,8 +367,10 @@ function revertData(config, data, schema) {
       if (!hasValue) {
         continue;
       }
-      const subData = revertData(config, fieldValue, value.properties);
-      Object.assign(row, subData);
+      const subData = revertData(config, fieldValue, value.properties, setDefault);
+      if (Object.keys(subData).length > 0) {
+        Object.assign(row, subData);
+      }
     }
   }
   return row;
@@ -421,7 +423,7 @@ async function update(credentials, clientConfig, schemaId, config, dataSchema, d
   if (config.sendRawData) {
     row = data;
   } else {
-    row = revertData(config, data, dataSchema);
+    row = revertData(config, data, dataSchema, false);
   }
   const response = await makeRequest(credentials, clientConfig, config, schemaId, "Edit", properties, row);
   const singleItem = response[0];
@@ -449,7 +451,7 @@ async function updateMany(credentials, clientConfig, schemaId, config, dataSchem
   if (config.sendRawData) {
     rows = data;
   } else {
-    rows = data.map((item) => revertData(config, item, dataSchema));
+    rows = data.map((item) => revertData(config, item, dataSchema, false));
   }
   const response = await makeRequest(credentials, clientConfig, config, schemaId, "Edit", properties, rows);
   if (config.returnRawData) {
@@ -473,7 +475,7 @@ async function deleteRecord(credentials, clientConfig, schemaId, config, dataSch
   if (config.sendRawData) {
     row = data;
   } else {
-    row = revertData(config, data, dataSchema);
+    row = revertData(config, data, dataSchema, false);
   }
   const response = await makeRequest(credentials, clientConfig, config, schemaId, "Delete", properties, row);
   const singleItem = response[0];
@@ -501,7 +503,7 @@ async function deleteMany(credentials, clientConfig, schemaId, config, dataSchem
   if (config.sendRawData) {
     rows = data;
   } else {
-    rows = data.map((item) => revertData(config, item, dataSchema));
+    rows = data.map((item) => revertData(config, item, dataSchema, false));
   }
   const response = await makeRequest(credentials, clientConfig, config, schemaId, "Delete", properties, rows);
   if (config.returnRawData) {

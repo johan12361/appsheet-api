@@ -33,7 +33,7 @@ export async function deleteMany<T>(
   if (config.sendRawData) {
     rows = data as Row[]
   } else {
-    rows = data.map((item) => revertData(config, item as Record<string, unknown>, dataSchema))
+    rows = data.map((item) => revertData(config, item as Record<string, unknown>, dataSchema, false))
   }
 
   const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Delete', properties, rows)

@@ -33,7 +33,7 @@ export async function updateMany<T>(
   if (config.sendRawData) {
     rows = data as Row[]
   } else {
-    rows = data.map((item) => revertData(config, item as Record<string, unknown>, dataSchema))
+    rows = data.map((item) => revertData(config, item as Record<string, unknown>, dataSchema, false))
   }
 
   const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Edit', properties, rows)

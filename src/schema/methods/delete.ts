@@ -30,7 +30,7 @@ export async function deleteRecord<T>(
   if (config.sendRawData) {
     row = data as Row
   } else {
-    row = revertData(config, data as Record<string, unknown>, dataSchema)
+    row = revertData(config, data as Record<string, unknown>, dataSchema, false)
   }
 
   const response = await makeRequest(credentials, clientConfig, config, schemaId, 'Delete', properties, row)

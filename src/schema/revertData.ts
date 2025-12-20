@@ -20,7 +20,12 @@ const REVERT_VALUE_FUNCTIONS = {
   date: revertDate
 }
 
-export function revertData(config: Config, data: Record<string, unknown>, schema: ObjectData): Row {
+export function revertData(
+  config: Config,
+  data: Record<string, unknown>,
+  schema: ObjectData,
+  setDefault: boolean = true
+): Row {
   const row: Row = {}
 
   for (const [key, value] of Object.entries(schema)) {
@@ -29,7 +34,7 @@ export function revertData(config: Config, data: Record<string, unknown>, schema
     const hasValue = fieldValue !== undefined
     const hasDefault = value.default !== undefined
 
-    if (!hasValue && !hasDefault) {
+    if (!hasValue && !(setDefault && hasDefault)) {
       continue
     }
 
@@ -50,9 +55,11 @@ export function revertData(config: Config, data: Record<string, unknown>, schema
         continue
       }
 
-      const subData = revertData(config, fieldValue as Record<string, unknown>, value.properties)
+      const subData = revertData(config, fieldValue as Record<string, unknown>, value.properties, setDefault)
 
-      Object.assign(row, subData)
+      if (Object.keys(subData).length > 0) {
+        Object.assign(row, subData)
+      }
     }
   }
 
